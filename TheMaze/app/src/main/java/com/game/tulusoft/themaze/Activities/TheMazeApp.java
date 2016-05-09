@@ -1,10 +1,8 @@
 package com.game.tulusoft.themaze.Activities;
 
 import android.app.Application;
-import android.widget.Toast;
 
 import com.facebook.FacebookSdk;
-import com.facebook.Profile;
 
 
 /**

@@ -4,14 +4,18 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
-import com.facebook.FacebookSdk;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
 import com.facebook.Profile;
+import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.game.tulusoft.themaze.Objective.ButtonSprite;
 import com.game.tulusoft.themaze.Objective.SpriteObjective;
+import com.game.tulusoft.themaze.R;
 import com.game.tulusoft.themaze.Utilities.Common;
 
 import org.anddev.andengine.engine.Engine;
@@ -21,6 +25,7 @@ import org.anddev.andengine.engine.options.resolutionpolicy.RatioResolutionPolic
 import org.anddev.andengine.entity.scene.Scene;
 import org.anddev.andengine.entity.scene.background.SpriteBackground;
 import org.anddev.andengine.entity.sprite.Sprite;
+import org.anddev.andengine.entity.text.ChangeableText;
 import org.anddev.andengine.input.touch.TouchEvent;
 import org.anddev.andengine.opengl.font.Font;
 import org.anddev.andengine.opengl.font.FontFactory;
@@ -48,7 +53,7 @@ public class OptionActivity extends BaseGameActivity implements SpriteObjective.
     Font mFont_Black_60;
 
     private ButtonSprite mbtnOption;
-//    ChangeableText txtSound;
+    ChangeableText txtWelcom;
 //    ChangeableText txtMusic;
 
     private ButtonSprite mbtnSound;
@@ -61,6 +66,7 @@ public class OptionActivity extends BaseGameActivity implements SpriteObjective.
 
     private ButtonSprite mbtnStore;
     private ButtonSprite mbtnFacebook;
+    private ButtonSprite mbtnArrowBack;
 
 
     int KnotEndWidth = 30;
@@ -73,6 +79,7 @@ public class OptionActivity extends BaseGameActivity implements SpriteObjective.
     //region facebook
     LoginButton btnLoginFacebook;
     private CallbackManager callbackManager;
+    Profile profile = Profile.getCurrentProfile();
     //endregion
 
 
@@ -80,39 +87,35 @@ public class OptionActivity extends BaseGameActivity implements SpriteObjective.
     protected void onCreate(Bundle pSavedInstanceState) {
         super.onCreate(pSavedInstanceState);
 
-        FacebookSdk.sdkInitialize(getApplicationContext());
-        Profile profile = Profile.getCurrentProfile();
         callbackManager = CallbackManager.Factory.create();
+
         btnLoginFacebook = new LoginButton(this);
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(0,0);
         this.addContentView(btnLoginFacebook,params);
 
-        if(isLoggedIn()) {
-//            mbtnFacebook.getObject_AnimatedSprite().animate(new long[]{100}, new int[]{1}, 1);
-        }
+        btnLoginFacebook.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Profile profileSuccess = Profile.getCurrentProfile();
+                if(profileSuccess !=null){
+                    Toast.makeText(OptionActivity.this, profileSuccess.getName(), Toast.LENGTH_SHORT).show();
+                    mbtnFacebook.getObject_AnimatedSprite().animate(new long[]{100}, new int[]{1}, 1);
+                }
 
-//        LoginManager.getInstance().registerCallback(callbackManager,
-//                new FacebookCallback<LoginResult>() {
-//                    @Override
-//                    public void onSuccess(LoginResult loginResult) {
-//                        Log.d("Success", "Login");
-//                        if(isLoggedIn()) {
-//                            mbtnFacebook.getObject_AnimatedSprite().animate(new long[]{100}, new int[]{1}, 1);
-//                            Profile profile = Profile.getCurrentProfile();
-//                            Toast.makeText(OptionActivity.this, profile.getName(), Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onCancel() {
-//                        Log.d("onCancel", "Login");
-//                    }
-//
-//                    @Override
-//                    public void onError(FacebookException exception) {
-//                        Log.d("onError", "Login");
-//                    }
-//                });
+            }
+
+            @Override
+            public void onCancel() {
+//                info.setText("Login attempt cancelled.");
+            }
+
+            @Override
+            public void onError(FacebookException e) {
+                e.printStackTrace();
+//                info.setText("Login attempt failed.");
+            }
+        });
+
     }
 
     public boolean isLoggedIn() {
@@ -128,7 +131,7 @@ public class OptionActivity extends BaseGameActivity implements SpriteObjective.
         FontFactory.setAssetBasePath("fonts/");
 
         this.mFontTexture_Black_60 = new BitmapTextureAtlas(256, 256, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
-        this.mFont_Black_60 = FontFactory.createFromAsset(this.mFontTexture_Black_60, this, "youmurdererbb_reg.ttf", 60, true, Color.BLACK);
+        this.mFont_Black_60 = FontFactory.createFromAsset(this.mFontTexture_Black_60, this, "utmfacebook.ttf", 40, true, Color.BLACK);
         engine.getTextureManager().loadTexture(this.mFontTexture_Black_60);
         engine.getFontManager().loadFont(this.mFont_Black_60);
 
@@ -143,8 +146,9 @@ public class OptionActivity extends BaseGameActivity implements SpriteObjective.
 
         this.mbtnStore = new ButtonSprite(150,300,"menu/","store.png",512,128,0,0,1,1,"mbtnStore");
         this.mbtnFacebook = new ButtonSprite(150,450,"menu/","facebook.png",512,256,0,0,1,2,"mbtnFacebook");
+        this.mbtnArrowBack = new ButtonSprite(10,775,"menu/","arrow_back.png",512,128,0,0,1,1,"mbtnArrowBack");
 
-//        txtSound = new ChangeableText(20, 120, mFont_Black_60, "Sound");
+        txtWelcom = new ChangeableText(20, 650, mFont_Black_60, "login facebook",100);
 //        txtMusic = new ChangeableText(20, 170, mFont_Black_60, "Music");
         return engine;
     }
@@ -166,6 +170,7 @@ public class OptionActivity extends BaseGameActivity implements SpriteObjective.
 
         this.mbtnStore.onLoadResources(mEngine, getBaseContext());
         this.mbtnFacebook.onLoadResources(mEngine, getBaseContext());
+        this.mbtnArrowBack.onLoadResources(mEngine,getBaseContext());
     }
 
     @Override
@@ -173,7 +178,7 @@ public class OptionActivity extends BaseGameActivity implements SpriteObjective.
         this.mScene = new Scene();
         this.mSprite_bg = new Sprite(0, 0, this.mTextureRegion_bg);
         this.mScene.setBackground(new SpriteBackground(this.mSprite_bg));
-//        mSprite_bg.attachChild(txtSound);
+        mSprite_bg.attachChild(txtWelcom);
 //        mSprite_bg.attachChild(txtMusic);
         this.mbtnOption.onLoadScene(this.mScene);
         this.mbtnSound.onLoadScene(this.mScene);
@@ -186,6 +191,7 @@ public class OptionActivity extends BaseGameActivity implements SpriteObjective.
 
         this.mbtnStore.onLoadScene(this.mScene);
         this.mbtnFacebook.onLoadScene(this.mScene);
+        this.mbtnArrowBack.onLoadScene(this.mScene);
         return this.mScene;
     }
 
@@ -203,6 +209,8 @@ public class OptionActivity extends BaseGameActivity implements SpriteObjective.
         this.mbtnRope_Sound.mSpriteObjectiveTouchListener = this;
         this.mbtnRope_Music.mSpriteObjectiveTouchListener = this;
         this.mbtnFacebook.mSpriteObjectiveTouchListener = this;
+        this.mbtnFacebook.mSpriteObjectiveFinishAnimationListener = this;
+        this.mbtnArrowBack.mSpriteObjectiveFinishAnimationListener = this;
 
         this.mbtnStore.CenterScreen_Horizontal();
         this.mbtnFacebook.CenterScreen_Horizontal();
@@ -215,6 +223,19 @@ public class OptionActivity extends BaseGameActivity implements SpriteObjective.
 
         this.mbtnKnot_Sound.getObject_AnimatedSprite().setPosition(deltaSound_Location, this.mbtnKnot_Sound.getObject_AnimatedSprite().getY());
         this.mbtnKnot_Music.getObject_AnimatedSprite().setPosition(deltaMusic_Location, this.mbtnKnot_Music.getObject_AnimatedSprite().getY());
+
+        if(isLoggedIn()){
+            mbtnFacebook.getObject_AnimatedSprite().animate(new long[]{100}, new int[]{1}, 1);
+            if(profile != null){
+                String mess = getResources().getString(R.string.facebook_welcom);
+                txtWelcom.setText(mess + " " + profile.getFirstName());
+                txtWelcom.setPosition(Common.getmWIDTH() / 2 - txtWelcom.getWidth() /2,txtWelcom.getY());
+            }
+        }
+        else {
+            mbtnFacebook.getObject_AnimatedSprite().animate(new long[]{100}, new int[]{0}, 1);
+            txtWelcom.setText(" ");
+        }
     }
 
     @Override
@@ -235,6 +256,16 @@ public class OptionActivity extends BaseGameActivity implements SpriteObjective.
             Common.theme_Music.setVolume(Common.getVolume_Music());
         }else if(_sender.getName().equals(this.mbtnFacebook.getName())){
             btnLoginFacebook.performClick();
+            if(isLoggedIn()){
+                if(profile != null){
+                    String mess = getResources().getString(R.string.facebook_welcom);
+                    txtWelcom.setText(mess + " " + profile.getFirstName());
+                    txtWelcom.setPosition(Common.getmWIDTH() / 2 - txtWelcom.getWidth() /2,txtWelcom.getY());
+                }
+            }
+            else {
+                txtWelcom.setText(" ");
+            }
         }
 
     }
@@ -259,6 +290,21 @@ public class OptionActivity extends BaseGameActivity implements SpriteObjective.
     @Override
     public void FinishAnimation(SpriteObjective _sender) {
         if(_sender.getName().equals(this.mbtnFacebook.getName())){
+            if(isLoggedIn()){
+                mbtnFacebook.getObject_AnimatedSprite().animate(new long[]{100}, new int[]{1}, 1);
+                if(profile != null){
+                    String mess = getResources().getString(R.string.facebook_welcom);
+                    txtWelcom.setText(mess + " " + profile.getFirstName());
+                    txtWelcom.setPosition(Common.getmWIDTH() / 2 - txtWelcom.getWidth() /2,txtWelcom.getY());
+                }
+            }
+            else {
+                mbtnFacebook.getObject_AnimatedSprite().animate(new long[]{100}, new int[]{0}, 1);
+                txtWelcom.setText(" ");
+            }
+        }
+        else if(_sender.getName().equals(this.mbtnArrowBack.getName())){
+            finish();
         }
     }
 
