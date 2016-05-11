@@ -91,7 +91,7 @@ public class Common {
 
     public static ButtonSprite getMbtnSound() {
         if(mbtnSound == null){
-            mbtnSound = new ButtonSprite(10,0,"menu/", "sound.png",128,64,0,0,2,1,"mbtnSound");
+            mbtnSound = new ButtonSprite(10,0,"menu/", "music.png",128,64,0,0,2,1,"mbtnSound");
         }
         return mbtnSound;
     }
