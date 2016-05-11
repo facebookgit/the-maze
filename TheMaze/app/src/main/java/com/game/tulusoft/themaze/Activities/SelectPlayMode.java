@@ -136,6 +136,7 @@ public class SelectPlayMode extends BaseGameActivity implements SpriteObjective.
     @Override
     public void onLoadComplete() {
         this.mbtnTextStory.mSpriteObjectiveFinishAnimationListener = this;
+        this.mbtnTextTrial.mSpriteObjectiveFinishAnimationListener = this;
         this.mbtnTextHard.mSpriteObjectiveTouchListener = this ;
         this.mbtnTextMedium.mSpriteObjectiveTouchListener = this ;
         this.mbtnTextNormal.mSpriteObjectiveTouchListener = this;
@@ -151,6 +152,9 @@ public class SelectPlayMode extends BaseGameActivity implements SpriteObjective.
         }
         else if(_sender.getName().equals(this.mbtnArrowBack.getName())){
             finish();
+        }else if(_sender.getName().equals(this.mbtnTextTrial.getName())){
+            Intent i = new Intent(SelectPlayMode.this, ArrayTrialItemActivity.class);
+            SelectPlayMode.this.startActivity(i);
         }
     }
 

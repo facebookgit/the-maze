@@ -34,6 +34,8 @@
         </activity>
         <activity android:name=".Activities.OptionActivity">
         </activity>
+        <activity android:name=".Activities.ArrayTrialItemActivity">
+        </activity>
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
