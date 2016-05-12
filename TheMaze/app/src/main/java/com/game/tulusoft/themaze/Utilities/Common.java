@@ -43,6 +43,8 @@ public class Common {
     public static String Key_Config_Count_Bugs = "Key_Config_Count_Bugs";
     public static String Key_Config_Count_Prohibit = "Key_Config_Count_Prohibit";
 
+    public static String Key_Config_Map_Trial = "Key_Config_Map_Trial";
+
     //Key gamesetting
     public static String Key_Game_Speed = "Key_Game_Speed";
     //game setting
@@ -603,6 +605,17 @@ public class Common {
 
     private static int Multi_Room_H;
 
+    public static String getMap_Trial() {
+        return Map_Trial;
+    }
+
+    public static void setMap_Trial(String map_Trial) {
+        Map_Trial = map_Trial;
+    }
+
+    private static String Map_Trial;
+
+
     public static void CommitSharedPreferent(Context _context){
         Common.getEdit(_context).putFloat(Common.Key_Config_Volume_Sound, Common.getVolume_Sound()).commit();
         Common.getEdit(_context).putFloat(Common.Key_Config_Volume_Music, Common.getVolume_Music()).commit();
@@ -621,6 +634,8 @@ public class Common {
         Common.getEdit(_context).putInt(Common.Key_Config_Coin_Local, Common.getCoin_Local()).commit();
         Common.getEdit(_context).putInt(Common.Key_Config_Count_Bugs, Common.getCount_Bugs()).commit();
         Common.getEdit(_context).putInt(Common.Key_Config_Count_Prohibit, Common.getCount_Prohibit()).commit();
+
+        Common.getEdit(_context).putString(Common.Key_Config_Map_Trial, Common.getMap_Trial()).commit();
     }
 
 }

@@ -99,6 +99,8 @@ public class Flash extends BaseGameActivity {
         int value_Count_Bugs = Common.getPref_config(getApplicationContext()).getInt(Common.Key_Config_Count_Bugs, 0);
         int value_Coin_Local = Common.getPref_config(getApplicationContext()).getInt(Common.Key_Config_Coin_Local, 0);
 
+        String value_Map_Trial = Common.getPref_config(getApplicationContext()).getString(Common.Key_Config_Map_Trial, "0,");
+
         Common.setMax_Room_N(value_Max_Room_N);
         Common.setMulti_Room_N(value_Mul_Room_N);
         Common.setMax_Room_M(value_Max_Room_M);
@@ -109,6 +111,8 @@ public class Flash extends BaseGameActivity {
         Common.setCount_Prohibit(value_Count_Prohibit);
         Common.setCount_Bugs(value_Count_Bugs);
         Common.setCoin_Local(value_Coin_Local);
+
+        Common.setMap_Trial(value_Map_Trial);
 
         Common.setiLevel(value_Level);
 

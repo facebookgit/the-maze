@@ -57,6 +57,10 @@ public class ButtonSprite extends SpriteObjective{
         mScene.registerTouchArea(object_AnimatedSprite);
     }
 
+    public void createScene(){
+        object_AnimatedSprite = new AnimatedSprite(this.positionX, this.positionY, this.object_TiledTextureRegion);
+    }
+
     public boolean isTouch(TouchEvent _event){
         if(object_AnimatedSprite.contains(_event.getX(),_event.getY())) return true;
         return false;

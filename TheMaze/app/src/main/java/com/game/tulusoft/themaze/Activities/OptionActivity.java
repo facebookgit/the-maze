@@ -149,7 +149,7 @@ public class OptionActivity extends BaseGameActivity implements SpriteObjective.
         this.mbtnArrowBack = new ButtonSprite(10,775,"menu/","arrow_back.png",512,128,0,0,1,1,"mbtnArrowBack");
 
         txtWelcom = new ChangeableText(20, 650, mFont_Black_60, "login facebook",100);
-//        txtMusic = new ChangeableText(20, 170, mFont_Black_60, "Music");
+//        txtMusic = new ChangeableText(20, 170, mFont_Black_40, "Music");
         return engine;
     }
 

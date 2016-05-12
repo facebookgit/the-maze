@@ -73,10 +73,10 @@ public class SelectPlayMode extends BaseGameActivity implements SpriteObjective.
 
 //        FontFactory.setAssetBasePath("fonts/");
 //        this.mFontTexture = new BitmapTextureAtlas(256, 256, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
-//        this.mFont_Black_60 = FontFactory.createFromAsset(this.mFontTexture, this, "youmurdererbb_reg.ttf", 100, true, Color.GREEN);
+//        this.mFont_Black_40 = FontFactory.createFromAsset(this.mFontTexture, this, "youmurdererbb_reg.ttf", 100, true, Color.GREEN);
 //
 //        this.mEngine.getTextureManager().loadTexture(this.mFontTexture);
-//        this.mEngine.getFontManager().loadFont(this.mFont_Black_60);
+//        this.mEngine.getFontManager().loadFont(this.mFont_Black_40);
 
         this.mbtnTextLevel.onLoadResources(mEngine,getBaseContext());
         this.mbtnTextHard.onLoadResources(mEngine,getBaseContext());
@@ -103,7 +103,7 @@ public class SelectPlayMode extends BaseGameActivity implements SpriteObjective.
 //        line.setColor(255,0,255);
 //        mSprite_bg.attachChild(line);
 
-//        Text abc = new Text(100, 100, mFont_Black_60, "tuyen", HorizontalAlign.CENTER);
+//        Text abc = new Text(100, 100, mFont_Black_40, "tuyen", HorizontalAlign.CENTER);
 //        mSprite_bg.attachChild(abc);
 
 
