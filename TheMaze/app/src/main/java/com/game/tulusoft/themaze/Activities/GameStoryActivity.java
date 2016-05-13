@@ -135,7 +135,7 @@ public class GameStoryActivity extends BaseGameActivity implements SpriteObjecti
         this.ScorePanel = new ButtonSprite(5,10,"gameplay/","score_panel.png",1024,256,0,0,1,1,"ScorePanel");
         this.ConfirmPanel = new ButtonSprite(5,-256,"gameplay/","confirm_panel.png",1024,256,0,0,1,1,"ConfirmPanel");
         this.Map = new ButtonSprite(paddingLeft_Map,paddingTop_Map,"gameplay/","map_gray_border.png",1024,1024,0,0,1,1,"Map");
-        this.mbtnArrowBack = new ButtonSprite(10,760,"menu/","arrow_back.png",512,128,0,0,1,1,"mbtnArrowBack");
+        this.mbtnArrowBack = new ButtonSprite(20,760,"menu/","arrow_back2.png",64,64,0,0,1,1,"mbtnArrowBack");
         this.mummy = new ButtonSprite(-object_width,0,"Objective/","mummy_114x52.png",1024,1024,0,0,11,11,"mummy");
 
 
@@ -161,8 +161,6 @@ public class GameStoryActivity extends BaseGameActivity implements SpriteObjecti
             arrWallH[i] = new ButtonSprite(-60,0,"gameplay/","wallH.png",64,8,0,0,1,1,"wall");
             arrWallV[i] = new ButtonSprite(-10,0,"gameplay/","wallV.png",8,64,0,0,1,1,"wall");
         }
-
-
 
         FontFactory.setAssetBasePath("fonts/");
         this.mFontTexture_Black_60 = new BitmapTextureAtlas(256, 256, TextureOptions.BILINEAR_PREMULTIPLYALPHA);

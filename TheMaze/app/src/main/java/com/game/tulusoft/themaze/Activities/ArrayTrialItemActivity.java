@@ -1,8 +1,8 @@
 package com.game.tulusoft.themaze.Activities;
 
 import android.graphics.Color;
-import android.os.Bundle;
 
+import com.game.tulusoft.themaze.Objective.ButtonSprite;
 import com.game.tulusoft.themaze.Objective.SpriteObjective;
 import com.game.tulusoft.themaze.Objective.TrialItem;
 import com.game.tulusoft.themaze.Utilities.Common;
@@ -52,11 +52,14 @@ public class ArrayTrialItemActivity extends BaseGameActivity implements SpriteOb
 
     int[] mMap_Trial;
 
+    private ButtonSprite mbtnArrowBack;
+
     @Override
     public Engine onLoadEngine() {
         this.mCamera = new Camera(0, 0, Common.getmWIDTH(), Common.getmHEIGHT());
         Engine engine = new Engine(new EngineOptions(true, EngineOptions.ScreenOrientation.PORTRAIT,
                 new RatioResolutionPolicy(Common.getmWIDTH(),Common.getmHEIGHT()),this.mCamera));
+        Common.getEdit(getBaseContext()).putString(Common.Key_Config_Map_Trial, "1,2,3,").commit();
 
         FontFactory.setAssetBasePath("fonts/");
 
@@ -76,6 +79,7 @@ public class ArrayTrialItemActivity extends BaseGameActivity implements SpriteOb
         engine.getFontManager().loadFont(this.mFont_Gray_100_blood);
 
 
+        this.mbtnArrowBack = new ButtonSprite(20,25,"menu/","arrow_back2.png",64,64,0,0,1,1,"mbtnArrowBack");
         txtTitle = new ChangeableText(20, 10, mFont_Black_40, "select map");
 
         String[] strMap_Trial = Common.getMap_Trial().split(",");
@@ -101,6 +105,7 @@ public class ArrayTrialItemActivity extends BaseGameActivity implements SpriteOb
         this.mBitmapTextureAtlas_bg = new BitmapTextureAtlas(1024, 1024, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
         this.mTextureRegion_bg = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBitmapTextureAtlas_bg, this, "bg_white.png", 0, 0);
         mEngine.getTextureManager().loadTextures(this.mBitmapTextureAtlas_bg);
+        this.mbtnArrowBack.onLoadResources(mEngine,getBaseContext());
 
         for(int i = 0 ; i < 25 ; i++){
             listTrial_Item.get(i).onLoadResources(mEngine,getBaseContext());
@@ -113,6 +118,7 @@ public class ArrayTrialItemActivity extends BaseGameActivity implements SpriteOb
         this.mSprite_bg = new Sprite(0, 0, this.mTextureRegion_bg);
         this.mScene.setBackground(new SpriteBackground(this.mSprite_bg));
         this.mScene.attachChild(txtTitle);
+        this.mbtnArrowBack.onLoadScene(this.mScene);
         for(int i = 0 ; i < 25 ; i++){
             listTrial_Item.get(i).onLoadScene(this.mScene);
         }
@@ -121,12 +127,15 @@ public class ArrayTrialItemActivity extends BaseGameActivity implements SpriteOb
 
     @Override
     public void onLoadComplete() {
+        this.mbtnArrowBack.mSpriteObjectiveFinishAnimationListener = this;
         txtTitle.setPosition(Common.getmWIDTH() / 2 - txtTitle.getWidth() / 2, 10);
     }
 
     @Override
     public void FinishAnimation(SpriteObjective _sender) {
-
+        if(_sender.getName().equals(this.mbtnArrowBack.getName())){
+            finish();
+        }
     }
 
     @Override

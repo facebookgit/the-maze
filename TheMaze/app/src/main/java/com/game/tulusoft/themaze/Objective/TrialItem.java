@@ -1,18 +1,15 @@
 package com.game.tulusoft.themaze.Objective;
 
 import android.content.Context;
-import android.graphics.Color;
+import android.content.Intent;
 
+import com.game.tulusoft.themaze.Activities.GamePlayActivity;
 import com.game.tulusoft.themaze.Interface.InterfaceSprite;
 
 import org.anddev.andengine.engine.Engine;
-import org.anddev.andengine.entity.IEntity;
 import org.anddev.andengine.entity.scene.Scene;
 import org.anddev.andengine.entity.text.ChangeableText;
 import org.anddev.andengine.opengl.font.Font;
-import org.anddev.andengine.opengl.font.FontFactory;
-import org.anddev.andengine.opengl.texture.TextureOptions;
-import org.anddev.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 
 import java.util.ArrayList;
 
@@ -26,6 +23,7 @@ public class TrialItem implements InterfaceSprite, SpriteObjective.SpriteObjecti
 
     ChangeableText txtNumRoom;
     int inumroom = 0;
+    Context mMainArrayContext;
 
     private ArrayList<ButtonSprite> arrHeadBone;
     private boolean isActive = false;
@@ -40,7 +38,7 @@ public class TrialItem implements InterfaceSprite, SpriteObjective.SpriteObjecti
         isActive = _active;
         arrHeadBone = new ArrayList<>();
         for(int i = 0; i < _iheadbone ; i++){
-            ButtonSprite mbtnHead = new ButtonSprite(0,103,"menu/","head_bone_g.png",64,64,0,0,1,1,"mbtnHead");
+            ButtonSprite mbtnHead = new ButtonSprite(i * 35,103,"menu/","head_bone_g.png",64,64,0,0,1,1,"mbtnHead");
             arrHeadBone.add(mbtnHead);
         }
     }
@@ -51,6 +49,7 @@ public class TrialItem implements InterfaceSprite, SpriteObjective.SpriteObjecti
         for(int i = 0; i < arrHeadBone.size() ; i++){
             arrHeadBone.get(i).onLoadResources(mEngine, mContext);
         }
+        mMainArrayContext = mContext;
     }
 
     @Override
@@ -74,6 +73,10 @@ public class TrialItem implements InterfaceSprite, SpriteObjective.SpriteObjecti
     public void FinishAnimation(SpriteObjective _sender) {
         if(_sender.getName().equals(this.mbtnMainBackground.getName())){
             System.out.println("bam vo cai nut co so ne :" + String.valueOf(inumroom));
+
+            Intent i = new Intent(mMainArrayContext, GamePlayActivity.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            mMainArrayContext.startActivity(i);
         }
     }
 }

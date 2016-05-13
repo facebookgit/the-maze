@@ -28,6 +28,11 @@ public class GameLoader extends AsyncTask<String, Integer, Boolean> {
             createPoint.CreaateWall();
             iTotalWall = createPoint.MapPoint.MapPointV.size() + createPoint.MapPoint.MapPointH.size();
             publishProgress((int) ((iTotalWall / (float) 60) * 100));
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         } while (iTotalWall < 60);
 
         return null;

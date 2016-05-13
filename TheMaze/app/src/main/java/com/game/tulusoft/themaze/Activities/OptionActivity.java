@@ -146,7 +146,7 @@ public class OptionActivity extends BaseGameActivity implements SpriteObjective.
 
         this.mbtnStore = new ButtonSprite(150,300,"menu/","store.png",512,128,0,0,1,1,"mbtnStore");
         this.mbtnFacebook = new ButtonSprite(150,450,"menu/","facebook.png",512,256,0,0,1,2,"mbtnFacebook");
-        this.mbtnArrowBack = new ButtonSprite(10,775,"menu/","arrow_back.png",512,128,0,0,1,1,"mbtnArrowBack");
+        this.mbtnArrowBack = new ButtonSprite(20,775,"menu/","arrow_back2.png",64,64,0,0,1,1,"mbtnArrowBack");
 
         txtWelcom = new ChangeableText(20, 650, mFont_Black_60, "login facebook",100);
 //        txtMusic = new ChangeableText(20, 170, mFont_Black_40, "Music");

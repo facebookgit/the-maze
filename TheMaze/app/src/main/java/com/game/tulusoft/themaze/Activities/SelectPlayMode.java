@@ -60,7 +60,7 @@ public class SelectPlayMode extends BaseGameActivity implements SpriteObjective.
         this.mbtnTextMode = new ButtonSprite(140,400,"menu/","text_mode.png",512,128,0,0,1,1,"mbtnTextMode");
         this.mbtnTextStory = new ButtonSprite(170,500,"menu/","text_story.png",256,256,0,0,1,1,"mbtnTextStory");
         this.mbtnTextTrial = new ButtonSprite(170,650,"menu/","text_trial.png",256,128,0,0,1,1,"mbtnTextTrial");
-        this.mbtnArrowBack = new ButtonSprite(10,775,"menu/","arrow_back.png",512,128,0,0,1,1,"mbtnArrowBack");
+        this.mbtnArrowBack = new ButtonSprite(20,775,"menu/","arrow_back2.png",64,64,0,0,1,1,"mbtnArrowBack");
 
         return engine;
     }
