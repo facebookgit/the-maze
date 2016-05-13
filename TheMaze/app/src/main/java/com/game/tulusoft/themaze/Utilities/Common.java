@@ -47,6 +47,7 @@ public class Common {
 
     //Key gamesetting
     public static String Key_Game_Speed = "Key_Game_Speed";
+    public static String Key_Game_Select_Map_Trial = "Key_Game_Select_Map_Trial";
     //game setting
 
     public static int baseSpeed = 100;

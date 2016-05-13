@@ -2,9 +2,11 @@ package com.game.tulusoft.themaze.Objective;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 
 import com.game.tulusoft.themaze.Activities.GamePlayActivity;
 import com.game.tulusoft.themaze.Interface.InterfaceSprite;
+import com.game.tulusoft.themaze.Utilities.Common;
 
 import org.anddev.andengine.engine.Engine;
 import org.anddev.andengine.entity.scene.Scene;
@@ -75,6 +77,7 @@ public class TrialItem implements InterfaceSprite, SpriteObjective.SpriteObjecti
             System.out.println("bam vo cai nut co so ne :" + String.valueOf(inumroom));
 
             Intent i = new Intent(mMainArrayContext, GamePlayActivity.class);
+            i.putExtra(Common.Key_Game_Select_Map_Trial,inumroom);
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mMainArrayContext.startActivity(i);
         }

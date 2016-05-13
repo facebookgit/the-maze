@@ -142,4 +142,27 @@ public class ArrayTrialItemActivity extends BaseGameActivity implements SpriteOb
     public void onTouchArea(SpriteObjective _sender, TouchEvent _event) {
 
     }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        Common.CommitSharedPreferent(getApplicationContext());
+
+        if(Common.theme_Music != null){
+            Common.theme_Music.pause();
+        }
+        if(Common.getFoot_step() != null){
+            Common.getFoot_step().pause();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(Common.theme_Music != null && Common.getIsSound()){
+            Common.theme_Music.play();
+        }
+    }
 }
