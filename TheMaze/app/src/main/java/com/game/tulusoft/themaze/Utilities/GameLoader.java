@@ -23,8 +23,9 @@ public class GameLoader extends AsyncTask<String, Integer, Boolean> {
         createPoint = new CreatePoint();
         mRoom = iRoom;
         mIsLoader = isLoader;
-        float addTimeLevel = Common.getiLevel() == 1 ? 1.5f : Common.getiLevel() == 2 ? 2.0f : 0;
-        mTotalTime = ((iRoom - 5) * 0.5) * 60000;
+        float addTimeLevel = Common.getiLevel() == 1 ? 1.5f : Common.getiLevel() == 2 ? 2.0f : 1;
+//        mTotalTime = ((iRoom - 5) * 0.5 + 3) * 60000;
+        mTotalTime =  60000; // test
         mTimeSleep = (long) ((mTotalTime * addTimeLevel) / 20);
     }
 
@@ -33,6 +34,7 @@ public class GameLoader extends AsyncTask<String, Integer, Boolean> {
         if(mIsLoader) {
             int iTotalWall = 0;
             do {
+                if (isCancelled()) break;
                 createPoint.CreaateWall();
                 iTotalWall = createPoint.MapPoint.MapPointV.size() + createPoint.MapPoint.MapPointH.size();
                 publishProgress((int) ((iTotalWall / (float) 60) * 100));
@@ -45,6 +47,7 @@ public class GameLoader extends AsyncTask<String, Integer, Boolean> {
         }else {
             int iprocess = 21;
             do {
+                if (isCancelled()) break;
                 iprocess--;
                 publishProgress(iprocess);
                 try {

@@ -74,8 +74,6 @@ public class TrialItem implements InterfaceSprite, SpriteObjective.SpriteObjecti
     @Override
     public void FinishAnimation(SpriteObjective _sender) {
         if(_sender.getName().equals(this.mbtnMainBackground.getName())){
-            System.out.println("bam vo cai nut co so ne :" + String.valueOf(inumroom));
-
             Intent i = new Intent(mMainArrayContext, GamePlayActivity.class);
             i.putExtra(Common.Key_Game_Select_Map_Trial,inumroom);
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

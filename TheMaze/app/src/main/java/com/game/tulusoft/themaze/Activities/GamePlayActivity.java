@@ -19,6 +19,7 @@ import org.anddev.andengine.engine.camera.Camera;
 import org.anddev.andengine.engine.options.EngineOptions;
 import org.anddev.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
 import org.anddev.andengine.entity.IEntity;
+import org.anddev.andengine.entity.modifier.AlphaModifier;
 import org.anddev.andengine.entity.modifier.IEntityModifier;
 import org.anddev.andengine.entity.modifier.MoveModifier;
 import org.anddev.andengine.entity.modifier.MoveYModifier;
@@ -39,6 +40,8 @@ import org.anddev.andengine.ui.activity.BaseGameActivity;
 import org.anddev.andengine.util.modifier.IModifier;
 
 import java.util.ArrayList;
+
+import javax.microedition.khronos.opengles.GL10;
 
 /**
  * Created by Shazam on 3/9/2016.
@@ -95,6 +98,10 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
     private ButtonSprite mRec_Bug;
     private ButtonSprite mRec_Prohibit;
 
+    private ButtonSprite mHeadBone_Tiny_x1;
+    private ButtonSprite mHeadBone_Tiny_x2;
+    private ButtonSprite mHeadBone_Tiny_x3;
+
     GameStory gameStory= new GameStory();
     ButtonSprite[] arrTrap;
     ButtonSprite[] arrWallH;
@@ -104,6 +111,8 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
 
     ArrayList<Integer> allObjectOnMap = new ArrayList<>();
 
+    GameLoader loader;
+    GameLoader loader2;
 
     int iCurrTrap = 0;
     int paddingLeft_Map = 12;
@@ -145,6 +154,10 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
         this.mRec_Coin = new ButtonSprite(290,37,"gameplay/","rec_coin.png",64,64,0,0,1,1,"mRec_Coin");
         this.mRec_Bug = new ButtonSprite(290,82,"gameplay/","rec_bug.png",64,64,0,0,1,1,"mRec_Bug");
         this.mRec_Prohibit = new ButtonSprite(290,127,"gameplay/","rec_prohibit.png",64,64,0,0,1,1,"mRec_Prohibit");
+
+        this.mHeadBone_Tiny_x1 = new ButtonSprite(0,0,"gameplay/","headbone_tiny_x1.png",64,64,0,0,1,1,"mHeadBone_Tiny_x1");
+        this.mHeadBone_Tiny_x2 = new ButtonSprite(100,0,"gameplay/","headbone_tiny_x2.png",64,64,0,0,1,1,"mHeadBone_Tiny_x2");
+        this.mHeadBone_Tiny_x3 = new ButtonSprite(200,0,"gameplay/","headbone_tiny_x3.png",64,64,0,0,1,1,"mHeadBone_Tiny_x3");
 
         arrTrap = new ButtonSprite[Common.getButtonLevel() +1];
         arrWallH = new ButtonSprite[60];
@@ -223,6 +236,10 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
         this.mRec_Bug.onLoadResources(mEngine, getBaseContext());
         this.mRec_Prohibit.onLoadResources(mEngine, getBaseContext());
 
+        this.mHeadBone_Tiny_x1.onLoadResources(mEngine, getBaseContext());
+        this.mHeadBone_Tiny_x2.onLoadResources(mEngine, getBaseContext());
+        this.mHeadBone_Tiny_x3.onLoadResources(mEngine, getBaseContext());
+
 
         for (int i = 0;i<arrTrap.length;i++) {
             arrTrap[i].onLoadResources(mEngine, getBaseContext());
@@ -277,14 +294,16 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
         this.ScorePanel.setIsButtonFlip(false);
         this.ScorePanel.moveToHide();
         this.Map.setIsButtonFlip(false);
+
         this.Map.moveToHide();
         this.mRec_Coin.moveToHide();
         this.mRec_Bug.moveToHide();
         this.mRec_Prohibit.moveToHide();
+
         this.ProcessBar.setIsButtonFlip(false);
         this.ProcessBar.CenterScreen();
 
-        GameLoader loader = new GameLoader(mMapSelected,true);
+        loader = new GameLoader(mMapSelected,true);
         loader.execute("");
         loader.mLoadComplete = this;
     }
@@ -381,11 +400,20 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
 
         this.mRec_Bug.setPlaySound(false);
         this.mRec_Prohibit.setPlaySound(false);
+        mHeadBone_Tiny_x1.createScene();
+        mHeadBone_Tiny_x2.createScene();
+        mHeadBone_Tiny_x3.createScene();
 
+        mHeadBone_Tiny_x2.setPositionX(this.ProcessBar.object_AnimatedSprite.getWidth() / 4);
+        mHeadBone_Tiny_x3.setPositionX(this.ProcessBar.object_AnimatedSprite.getWidth() / 2);
 
-        GameLoader loader = new GameLoader(mMapSelected,false);
-        loader.execute("");
-        loader.mLoadComplete = this;
+        this.ProcessBar.object_AnimatedSprite.attachChild(mHeadBone_Tiny_x1.object_AnimatedSprite);
+        this.ProcessBar.object_AnimatedSprite.attachChild(mHeadBone_Tiny_x2.object_AnimatedSprite);
+        this.ProcessBar.object_AnimatedSprite.attachChild(mHeadBone_Tiny_x3.object_AnimatedSprite);
+
+        loader2 = new GameLoader(mMapSelected,false);
+        loader2.execute("");
+        loader2.mLoadComplete = this;
     }
 
 
@@ -532,8 +560,39 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
             if (this.ProcessBar != null) {
                 this.ProcessBar.getObject_AnimatedSprite().animate(new long[]{100}, new int[]{
                         iProcess}, 1);
+
+                if(iProcess == 11){
+                    FadeSprite(mHeadBone_Tiny_x3);
+                }else if(iProcess == 10){
+                    this.ProcessBar.object_AnimatedSprite.detachChild(mHeadBone_Tiny_x3.object_AnimatedSprite);
+                }else if(iProcess == 6){
+                    FadeSprite(mHeadBone_Tiny_x2);
+                }else if(iProcess == 5){
+                    this.ProcessBar.object_AnimatedSprite.detachChild(mHeadBone_Tiny_x2.object_AnimatedSprite);
+                }else if(iProcess == 1){
+                    FadeSprite(mHeadBone_Tiny_x1);
+                }else if(iProcess == 0){
+                    this.ProcessBar.object_AnimatedSprite.detachChild(mHeadBone_Tiny_x1.object_AnimatedSprite);
+                }
             }
         }
+    }
+
+    private void FadeSprite(ButtonSprite _Item){
+        AlphaModifier[] arrFade = new AlphaModifier[2];
+        float SpriteAlpha = _Item.object_AnimatedSprite.getAlpha();
+        AlphaModifier iem1 = new AlphaModifier(0.5f, SpriteAlpha, 0);
+        arrFade[0] = iem1;
+        AlphaModifier iem2 = new AlphaModifier(0.5f, 0, SpriteAlpha);
+        arrFade[1] = iem2;
+
+        SequenceEntityModifier sequenceEntityModifier = new SequenceEntityModifier(arrFade){
+            @Override
+            protected void onModifierFinished(IEntity pItem) {
+                super.reset();
+            }
+        };
+        _Item.object_AnimatedSprite.registerEntityModifier(sequenceEntityModifier);
     }
 
     @Override
@@ -756,7 +815,16 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
         }
     }
 
-
+    @Override
+    protected void onStop() {
+        if(loader != null){
+            loader.cancel(true);
+        }
+        if(loader2 != null){
+            loader2.cancel(true);
+        }
+        super.onStop();
+    }
 
     @Override
     protected void onPause() {
