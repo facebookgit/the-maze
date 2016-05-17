@@ -98,6 +98,7 @@ public class Flash extends BaseGameActivity {
         int value_Count_Prohibit = Common.getPref_config(getApplicationContext()).getInt(Common.Key_Config_Count_Prohibit, 0);
         int value_Count_Bugs = Common.getPref_config(getApplicationContext()).getInt(Common.Key_Config_Count_Bugs, 0);
         int value_Coin_Local = Common.getPref_config(getApplicationContext()).getInt(Common.Key_Config_Coin_Local, 0);
+        int value_Game_Speed = Common.getPref_config(getApplicationContext()).getInt(Common.Key_Game_Speed, 1);
 
         String value_Map_Trial = Common.getPref_config(getApplicationContext()).getString(Common.Key_Config_Map_Trial, "0,");
 
@@ -120,6 +121,8 @@ public class Flash extends BaseGameActivity {
 
         Common.setVolume_Sound(value_Volume_Sound);
         Common.setVolume_Music(value_Volume_music);
+
+        Common.setGame_Speed(value_Game_Speed);
 
         this.mLoGo.CenterScreen();
         this.mLoading.CenterScreen();

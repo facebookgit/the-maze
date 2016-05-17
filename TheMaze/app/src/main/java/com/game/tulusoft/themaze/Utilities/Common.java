@@ -71,7 +71,7 @@ public class Common {
     public static void setGame_Speed(int game_Speed) {
         Common.game_Speed = game_Speed;
     }
-    private static int game_Speed = 5;
+    private static int game_Speed = 1;
 
     public static int getObject_width() {
         return object_width;
@@ -235,6 +235,12 @@ public class Common {
     //sound
     public static Music theme_Music;
 
+    public static Sound getRope_slide() {
+        return rope_slide;
+    }
+
+    public static Sound rope_slide;
+
     public static Sound getCoin_drop() {
         return coin_drop;
     }
@@ -335,6 +341,7 @@ public class Common {
         SoundFactory.setAssetBasePath("sfx/");
         try {
             theme_Music = MusicFactory.createMusicFromAsset(_engine.getMusicManager(), _context, "theme2.wav");
+            rope_slide = SoundFactory.createSoundFromAsset(_engine.getSoundManager(), _context, "rope_slide.wav");
             coin_drop = SoundFactory.createSoundFromAsset(_engine.getSoundManager(), _context, "coin_drop.wav");
             bug_hit2 = SoundFactory.createSoundFromAsset(_engine.getSoundManager(), _context, "bug_hit2.wav");
             bug_hit = SoundFactory.createSoundFromAsset(_engine.getSoundManager(), _context, "bug_hit.wav");
@@ -369,6 +376,9 @@ public class Common {
     }
 
     public static void setVolumeSound(float _volume){
+        if(Common.rope_slide != null){
+            Common.rope_slide.setVolume(_volume);
+        }
         if(Common.coin_drop != null){
             Common.coin_drop.setVolume(_volume);
         }
@@ -425,6 +435,9 @@ public class Common {
     public static void releaseSound(){
         if(Common.theme_Music != null){
             Common.theme_Music.release();
+        }
+        if(Common.rope_slide != null){
+            Common.rope_slide.release();
         }
         if(Common.coin_drop != null){
             Common.coin_drop.release();
@@ -637,6 +650,7 @@ public class Common {
         Common.getEdit(_context).putInt(Common.Key_Config_Count_Prohibit, Common.getCount_Prohibit()).commit();
 
         Common.getEdit(_context).putString(Common.Key_Config_Map_Trial, Common.getMap_Trial()).commit();
+        Common.getEdit(_context).putInt(Common.Key_Game_Speed, Common.getGame_Speed()).commit();
     }
 
 }

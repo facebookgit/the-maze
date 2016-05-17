@@ -19,6 +19,7 @@ import org.anddev.andengine.engine.options.resolutionpolicy.RatioResolutionPolic
 import org.anddev.andengine.entity.IEntity;
 import org.anddev.andengine.entity.modifier.IEntityModifier;
 import org.anddev.andengine.entity.modifier.MoveModifier;
+import org.anddev.andengine.entity.modifier.MoveYModifier;
 import org.anddev.andengine.entity.modifier.ScaleModifier;
 import org.anddev.andengine.entity.modifier.SequenceEntityModifier;
 import org.anddev.andengine.entity.scene.Scene;
@@ -50,7 +51,6 @@ public class GameStoryActivity extends BaseGameActivity implements SpriteObjecti
     private Sprite mSprite_bg;
 
     private ButtonSprite Map;
-//        private ButtonSprite trap;
     private ButtonSprite ConfirmPanel;
     private ButtonSprite ScorePanel;
     private ButtonSprite mbtnArrowBack;
@@ -99,6 +99,7 @@ public class GameStoryActivity extends BaseGameActivity implements SpriteObjecti
 
     ChangeableText txt_Confirm_Yes;
     ChangeableText txt_Confirm_No;
+    ChangeableText txt_Confirm_Quit_Game;
 
     int iCurrTrap = 0;
     int paddingLeft_Map = 12;
@@ -106,7 +107,6 @@ public class GameStoryActivity extends BaseGameActivity implements SpriteObjecti
     int imultiChoice = 0;
     int iStart = -1;
     int iRandomProhibit;
-    int iNextRoom_useBugs;
 
     int baseSpeed = Common.baseSpeed;
     int object_width = Common.getObject_width();
@@ -119,7 +119,6 @@ public class GameStoryActivity extends BaseGameActivity implements SpriteObjecti
     int[][] mummyAction = new int[5][];
     int[][] coinAction = new int[3][];
 
-//    ArrayList<ButtonSprite> arrWall;
     @Override
     protected void onCreate(Bundle pSavedInstanceState) {
         super.onCreate(pSavedInstanceState);
@@ -133,7 +132,7 @@ public class GameStoryActivity extends BaseGameActivity implements SpriteObjecti
 
 //        this.trap = new ButtonSprite(0,0,"gameplay/","trapall.png",256,256,0,0,4,4);
         this.ScorePanel = new ButtonSprite(5,10,"gameplay/","score_panel.png",1024,256,0,0,1,1,"ScorePanel");
-        this.ConfirmPanel = new ButtonSprite(5,-256,"gameplay/","confirm_panel.png",1024,256,0,0,1,1,"ConfirmPanel");
+        this.ConfirmPanel = new ButtonSprite(0,-548,"menu/","confirm_panel_rope_color.png",512,1024,0,0,1,1,"ConfirmPanel");
         this.Map = new ButtonSprite(paddingLeft_Map,paddingTop_Map,"gameplay/","map_gray_border.png",1024,1024,0,0,1,1,"Map");
         this.mbtnArrowBack = new ButtonSprite(20,760,"menu/","arrow_back2.png",64,64,0,0,1,1,"mbtnArrowBack");
         this.mummy = new ButtonSprite(-object_width,0,"Objective/","mummy_114x52.png",1024,1024,0,0,11,11,"mummy");
@@ -170,7 +169,7 @@ public class GameStoryActivity extends BaseGameActivity implements SpriteObjecti
         this.mFont_Red_60 = FontFactory.createFromAsset(this.mFontTexture_Red_60, this, "youmurdererbb_reg.ttf", 60, true, Color.rgb(180,102,1));
 
         this.mFontTexture_Yellow_40 = new BitmapTextureAtlas(256, 256, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
-        this.mFont_Yellow_40 = FontFactory.createFromAsset(this.mFontTexture_Yellow_40, this, "youmurdererbb_reg.ttf", 40, true, Color.rgb(231,189,21));
+        this.mFont_Yellow_40 = FontFactory.createFromAsset(this.mFontTexture_Yellow_40, this, "youmurdererbb_reg.ttf", 60, true, Color.rgb(30,38,11));
 
         engine.getTextureManager().loadTexture(this.mFontTexture_Black_60);
         engine.getFontManager().loadFont(this.mFont_Black_60);
@@ -193,8 +192,9 @@ public class GameStoryActivity extends BaseGameActivity implements SpriteObjecti
         txtNumBugs = new ChangeableText(340, 79, mFont_Red_60, "0",5);
         txtNumProhibit = new ChangeableText(340, 124, mFont_Red_60, "0",5);
 
-        txt_Confirm_Yes = new ChangeableText(210, 430, mFont_Yellow_40, "yes");
-        txt_Confirm_No = new ChangeableText(320, 430, mFont_Yellow_40, "no");
+        txt_Confirm_Yes = new ChangeableText(110, 480, mFont_Yellow_40, "yes");
+        txt_Confirm_No = new ChangeableText(220, 480, mFont_Yellow_40, "no");
+        txt_Confirm_Quit_Game = new ChangeableText(100, 410, mFont_Yellow_40, "quit game");
 
         return engine;
     }
@@ -260,12 +260,6 @@ public class GameStoryActivity extends BaseGameActivity implements SpriteObjecti
         }
         this.ScorePanel.onLoadScene(this.mScene);
         this.mbtnArrowBack.onLoadScene(this.mScene);
-//        this.mScene.setOnSceneTouchListener(new Scene.IOnSceneTouchListener() {
-//            @Override
-//            public boolean onSceneTouchEvent(Scene scene, TouchEvent touchEvent) {
-//                return false;
-//            }
-//        });
 
         for (int i = 0;i < 60;i++) {
             arrWallH[i].onLoadScene(this.mScene);
@@ -282,13 +276,10 @@ public class GameStoryActivity extends BaseGameActivity implements SpriteObjecti
 
 
         this.ConfirmPanel.onLoadScene(this.mScene);
-//        this.ConfirmPanel.object_AnimatedSprite.attachChild(txt_Confirm_Yes);
-//        this.ConfirmPanel.object_AnimatedSprite.attachChild(txt_Confirm_No);
 
-        this.mScene.attachChild(txt_Confirm_Yes);
-        this.mScene.attachChild(txt_Confirm_No);
-        this.mScene.registerTouchArea(txt_Confirm_Yes);
-        this.mScene.registerTouchArea(txt_Confirm_No);
+        this.ConfirmPanel.object_AnimatedSprite.attachChild(txt_Confirm_Yes);
+        this.ConfirmPanel.object_AnimatedSprite.attachChild(txt_Confirm_No);
+        this.ConfirmPanel.object_AnimatedSprite.attachChild(txt_Confirm_Quit_Game);
         return this.mScene;
     }
 
@@ -297,15 +288,12 @@ public class GameStoryActivity extends BaseGameActivity implements SpriteObjecti
         this.ScorePanel.setIsButtonFlip(false);
         this.Map.setIsButtonFlip(false);
         this.mummy.setIsButtonFlip(false);
-//        this.mCoin.setIsButtonFlip(false);
-//        this.Map.moveToHide();
+
         this.mbtnArrowBack.setIsButtonFlip(true);
         this.Map.mSpriteObjectiveTouchListener = this;
         this.mRec_Bug.mSpriteObjectiveTouchListener = this;
         this.mRec_Prohibit.mSpriteObjectiveTouchListener = this;
         this.mbtnArrowBack.mSpriteObjectiveFinishAnimationListener = this;
-
-        this.ConfirmPanel.object_AnimatedSprite.registerEntityModifier(new ScaleModifier(0.1f, 1f, 0.75f));
 
         coinAction[0] = new int[]{0,1,2,3,4,0};
         coinAction[1] = new int[]{0,4,3,2,1,0};
@@ -338,10 +326,7 @@ public class GameStoryActivity extends BaseGameActivity implements SpriteObjecti
         txtNumCoin.setText(String.valueOf(Common.getCoin_Local()));
         txtNumBugs.setText(String.valueOf(Common.getCount_Bugs()));
         txtNumProhibit.setText(String.valueOf(Common.getCount_Prohibit()));
-
-
-        this.txt_Confirm_Yes.setPosition(-this.txt_Confirm_Yes.getWidth(), 0);
-        this.txt_Confirm_No.setPosition(-this.txt_Confirm_No.getWidth(), 0);
+        this.ConfirmPanel.CenterScreen_Horizontal();
 
         this.mRec_Bug.setPlaySound(false);
         this.mRec_Prohibit.setPlaySound(false);
@@ -703,14 +688,27 @@ public class GameStoryActivity extends BaseGameActivity implements SpriteObjecti
     private void PressBackButton(){
         if(isShowConfirmPanel){
             isShowConfirmPanel = false;
-            this.ConfirmPanel.moveToHide();
-            this.txt_Confirm_Yes.setPosition(-this.txt_Confirm_Yes.getWidth(), 0);
-            this.txt_Confirm_No.setPosition(-this.txt_Confirm_No.getWidth(),0);
+            MoveYModifier movey = new MoveYModifier(1,0,-548){
+                @Override
+                protected void onModifierFinished(IEntity pItem) {
+                    super.onModifierFinished(pItem);
+                    Common.getRope_slide().stop();
+                }
+            };
+            this.ConfirmPanel.object_AnimatedSprite.registerEntityModifier(movey);
+            Common.getRope_slide().play();
         }else {
             isShowConfirmPanel = true;
-            this.ConfirmPanel.CenterScreen();
-            this.txt_Confirm_Yes.setPosition(210, 430);
-            this.txt_Confirm_No.setPosition(320,430);
+
+            MoveYModifier movey = new MoveYModifier(1,-548,0){
+                @Override
+                protected void onModifierFinished(IEntity pItem) {
+                    super.onModifierFinished(pItem);
+                    Common.getRope_slide().stop();
+                }
+            };
+            this.ConfirmPanel.object_AnimatedSprite.registerEntityModifier(movey);
+            Common.getRope_slide().play();
         }
     }
 

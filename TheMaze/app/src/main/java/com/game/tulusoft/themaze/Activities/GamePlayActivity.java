@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.game.tulusoft.themaze.Objective.ButtonSprite;
 import com.game.tulusoft.themaze.Objective.SpriteObjective;
@@ -56,6 +57,7 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
     private Sprite mSprite_bg;
 
     private ButtonSprite Map;
+    private ButtonSprite ConfirmPanel;
     private ButtonSprite ScorePanel;
     private ButtonSprite ProcessBar;
 
@@ -139,6 +141,7 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
                 new RatioResolutionPolicy(Common.getmWIDTH(),Common.getmHEIGHT()),this.mCamera));
 
         this.ScorePanel = new ButtonSprite(5,10,"gameplay/","score_panel.png",1024,256,0,0,1,1,"ScorePanel");
+        this.ConfirmPanel = new ButtonSprite(0,-548,"menu/","confirm_panel_rope_color.png",512,1024,0,0,1,1,"ConfirmPanel");
         this.Map = new ButtonSprite(22,200,"gameplay/","map_gray_border.png",1024,1024,0,0,1,1,"Map");
         this.ProcessBar = new ButtonSprite(22,200,"gameplay/","process_all.png",2048,1024,0,0,3,7,"ProcessBar");
         this.mbtnArrowBack = new ButtonSprite(20,775,"menu/","arrow_back2.png",64,64,0,0,1,1,"mbtnArrowBack");
@@ -221,6 +224,7 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
         this.mbtnArrowBack.onLoadResources(mEngine,getBaseContext());
 
         this.ScorePanel.onLoadResources(mEngine, getBaseContext());
+        this.ConfirmPanel.onLoadResources(mEngine, getBaseContext());
         this.Map.onLoadResources(mEngine, getBaseContext());
         this.ProcessBar.onLoadResources(mEngine, getBaseContext());
 
@@ -284,6 +288,7 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
         this.mLockDoor.onLoadScene(this.mScene);
 
         this.mummy.onLoadScene(this.mScene);
+        this.ConfirmPanel.onLoadScene(this.mScene);
 
         return this.mScene;
     }
@@ -302,6 +307,7 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
 
         this.ProcessBar.setIsButtonFlip(false);
         this.ProcessBar.CenterScreen();
+        this.ConfirmPanel.CenterScreen_Horizontal();
 
         loader = new GameLoader(mMapSelected,true);
         loader.execute("");
@@ -322,7 +328,6 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
             movescorepanel = new MoveModifier(0.2f, this.Map.object_AnimatedSprite.getX(), 10, this.Map.object_AnimatedSprite.getY(), 765);
             this.mbtnArrowBack.object_AnimatedSprite.registerEntityModifier(movescorepanel);
             this.mbtnArrowBack.mSpriteObjectiveFinishAnimationListener = this;
-
 
             movescorepanel = new MoveModifier(0.2f, this.Map.object_AnimatedSprite.getX(), 290, this.Map.object_AnimatedSprite.getY(), 37);
             this.mRec_Coin.object_AnimatedSprite.registerEntityModifier(movescorepanel);
@@ -354,6 +359,8 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
             this.ProcessBar.object_AnimatedSprite.registerEntityModifier(movescorepanel);
         }else {
             // you lose, end of time
+
+            ShowPanel();
         }
     }
 
@@ -741,6 +748,10 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
                                     } else {
                                         Common.getReturn_door().play();
                                     }
+
+                                    if(NextRoom > mMapSelected){
+                                        ShowPanel();
+                                    }
                                 }
                             };
 
@@ -845,6 +856,34 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
         super.onResume();
         if(Common.theme_Music != null && Common.getIsSound()){
             Common.theme_Music.play();
+        }
+    }
+
+
+    private void ShowPanel(){
+        if(isShowConfirmPanel){
+            isShowConfirmPanel = false;
+            MoveYModifier movey = new MoveYModifier(1,0,-548){
+                @Override
+                protected void onModifierFinished(IEntity pItem) {
+                    super.onModifierFinished(pItem);
+                    Common.getRope_slide().stop();
+                }
+            };
+            this.ConfirmPanel.object_AnimatedSprite.registerEntityModifier(movey);
+            Common.getRope_slide().play();
+        }else {
+            isShowConfirmPanel = true;
+
+            MoveYModifier movey = new MoveYModifier(1,-548,0){
+                @Override
+                protected void onModifierFinished(IEntity pItem) {
+                    super.onModifierFinished(pItem);
+                    Common.getRope_slide().stop();
+                }
+            };
+            this.ConfirmPanel.object_AnimatedSprite.registerEntityModifier(movey);
+            Common.getRope_slide().play();
         }
     }
 }
