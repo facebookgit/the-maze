@@ -18,15 +18,32 @@ public class GameLoader extends AsyncTask<String, Integer, Boolean> {
     double mTotalTime =0;
     long mTimeSleep =0;
     boolean mIsLoader = false;
+    boolean isPaused = false;
+    boolean isStop = false;
     public  CreatePoint createPoint;
+    int baseTime = 4;
     public GameLoader(int iRoom,boolean isLoader){
         createPoint = new CreatePoint();
         mRoom = iRoom;
         mIsLoader = isLoader;
-        float addTimeLevel = Common.getiLevel() == 1 ? 1.5f : Common.getiLevel() == 2 ? 2.0f : 1;
-//        mTotalTime = ((iRoom - 5) * 0.5 + 3) * 60000;
-        mTotalTime =  60000; // test
+        float addTimeLevel = Common.getiLevel() == 1 ? 2.0f : Common.getiLevel() == 2 ? 2.5f : 1;
+        mTotalTime = ((iRoom - 5) * 0.5 + baseTime) * 60000;
+//        mTotalTime =  5000; // test
         mTimeSleep = (long) ((mTotalTime * addTimeLevel) / 20);
+    }
+
+    public void pause()
+    {
+        this.isPaused = true;
+    }
+
+    public void resume()
+    {
+        this.isPaused = false;
+    }
+
+    public void stop(){
+        this.isStop = true;
     }
 
     @Override
@@ -34,6 +51,7 @@ public class GameLoader extends AsyncTask<String, Integer, Boolean> {
         if(mIsLoader) {
             int iTotalWall = 0;
             do {
+                if(isStop) return null;
                 if (isCancelled()) break;
                 createPoint.CreaateWall();
                 iTotalWall = createPoint.MapPoint.MapPointV.size() + createPoint.MapPoint.MapPointH.size();
@@ -47,7 +65,17 @@ public class GameLoader extends AsyncTask<String, Integer, Boolean> {
         }else {
             int iprocess = 21;
             do {
+                if(isStop) return null;
                 if (isCancelled()) break;
+                while (isPaused){
+                    if(isStop) return null;
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+
                 iprocess--;
                 publishProgress(iprocess);
                 try {

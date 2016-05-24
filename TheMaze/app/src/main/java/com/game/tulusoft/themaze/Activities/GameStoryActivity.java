@@ -337,15 +337,9 @@ public class GameStoryActivity extends BaseGameActivity implements SpriteObjecti
         if(_sender.getName().equals(this.Map.getName())){
             if(isShowConfirmPanel){
                 if(txt_Confirm_Yes.contains(_event.getX(),_event.getY())){
-                    if(Common.getClick_button() != null){
-                        Common.getClick_button().play();
-                    }
                     finish();
                 }
                 else if(txt_Confirm_No.contains(_event.getX(),_event.getY())){
-                    if(Common.getClick_button() != null){
-                        Common.getClick_button().play();
-                    }
                     PressBackButton();
                 }
             }else {
