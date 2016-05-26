@@ -623,6 +623,10 @@ public class Common {
         return Map_Trial;
     }
 
+    public static String[] getArr_Map_Trial(){
+        return Common.getMap_Trial().split(",");
+    }
+
     public static void setMap_Trial(String map_Trial) {
         Map_Trial = map_Trial;
     }

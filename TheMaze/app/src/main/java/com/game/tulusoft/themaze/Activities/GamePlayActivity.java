@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.game.tulusoft.themaze.Objective.ButtonSprite;
@@ -40,6 +41,7 @@ import org.anddev.andengine.opengl.texture.region.TextureRegion;
 import org.anddev.andengine.ui.activity.BaseGameActivity;
 import org.anddev.andengine.util.modifier.IModifier;
 
+import java.net.CookieManager;
 import java.util.ArrayList;
 
 import javax.microedition.khronos.opengles.GL10;
@@ -128,6 +130,7 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
     int imultiChoice = 0;
     int iStart = -1;
     int iRandomProhibit;
+    int mPointHead = 3;
 
     int baseSpeed = Common.baseSpeed;
     int object_width = Common.getObject_width();
@@ -137,7 +140,7 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
     boolean isClickProhibit = true;
     boolean isClickBugs = true;
 
-    int[][] mummyAction = new int[5][];
+    int[][] mummyAction = new int[4][];
     int[][] coinAction = new int[3][];
 
     float HeadBone_SpriteAlpha = 0;
@@ -153,7 +156,7 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
         this.Map = new ButtonSprite(22,200,"gameplay/","map_gray_border.png",1024,1024,0,0,1,1,"Map");
         this.ProcessBar = new ButtonSprite(22,200,"gameplay/","process_all.png",2048,1024,0,0,3,7,"ProcessBar");
         this.mbtnArrowBack = new ButtonSprite(20,775,"menu/","arrow_back2.png",64,64,0,0,1,1,"mbtnArrowBack");
-        this.mummy = new ButtonSprite(-object_width,0,"Objective/","mummy_114x52.png",1024,1024,0,0,11,11,"mummy");
+        this.mummy = new ButtonSprite(-object_width,0,"Objective/","mummy_52px.png",512,256,0,0,5,4,"mummy");
 
 
         this.mCoin = new ButtonSprite(-object_width,object_width,"gameplay/","coin_glass6x6.png",512,512,0,0,6,6,"mCoin");
@@ -402,8 +405,9 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
             this.ConfirmPanel.object_AnimatedSprite.detachChild(mbtnShare.object_AnimatedSprite);
 
             this.ConfirmPanel.object_AnimatedSprite.attachChild(mbtnReplay.object_AnimatedSprite);
-
-            System.out.println("no vo cho nay ne 456");
+            if(detectNextGame()){
+                this.ConfirmPanel.object_AnimatedSprite.attachChild(mbtnNext.object_AnimatedSprite);
+            }
             ShowPanel();
         }
     }
@@ -425,10 +429,10 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
         mummyAction[1] = new int[]{5,6,7,8,9}; // right move
         mummyAction[2] = new int[]{10,11,12,13,14}; // bottom move
         mummyAction[3] = new int[]{15,16,17,18,19}; // left move
-        mummyAction[4] = new int[]{22,23,24,25,26,27,28,29,
-                30,31,32,33,34,35,36,37,38,39,
-                40,41,42,43,44,45,46,47,48,49,
-                50,51,52,53,54,55,56,57,58,59,}; // dance
+//        mummyAction[4] = new int[]{22,23,24,25,26,27,28,29,
+//                30,31,32,33,34,35,36,37,38,39,
+//                40,41,42,43,44,45,46,47,48,49,
+//                50,51,52,53,54,55,56,57,58,59,}; // dance
 
         mCoin.object_AnimatedSprite.animate(new long[]{baseSpeed, baseSpeed, baseSpeed, baseSpeed, baseSpeed, baseSpeed,
                         baseSpeed, baseSpeed, baseSpeed, baseSpeed, baseSpeed, baseSpeed,
@@ -438,7 +442,7 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
                         baseSpeed, baseSpeed, baseSpeed, baseSpeed, baseSpeed, baseSpeed},
                 0, 35, true);
 
-        setMoveForMummy(4, 1);
+//        setMoveForMummy(4, 1);
 
         setStartRoom();
 
@@ -471,7 +475,7 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
         loader2.mLoadComplete = this;
     }
 
-    private void resetGame(){
+    private void resetGame(boolean _isnextGame){
 //        gameStory = new GameStory();
 //        mummy.object_AnimatedSprite.stopAnimation();
 //        mummy.object_AnimatedSprite.clearEntityModifiers();
@@ -527,6 +531,9 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
 
         ShowPanel();
         Intent intent = getIntent();
+        if(_isnextGame) {
+            intent.putExtra(Common.Key_Game_Select_Map_Trial, mMapSelected++);
+        }
         finish();
         startActivity(intent);
     }
@@ -557,6 +564,28 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
         }
 
         return iResults;
+    }
+
+    public boolean detectNextGame(){
+        boolean bresults = false;
+        if(Common.getArr_Map_Trial().length > (mMapSelected - 4)) bresults = true;
+        return bresults;
+    }
+
+    public void caculationGameComplete(int _CurPointHead){
+        int MapIndex = mMapSelected - 5;
+        int iPointHead = Integer.valueOf(Common.getArr_Map_Trial()[MapIndex]);
+        if(_CurPointHead > iPointHead) {
+
+            String[] arr_Map_Trial = Common.getArr_Map_Trial();
+            arr_Map_Trial[MapIndex] = String.valueOf(_CurPointHead);
+
+            String valueTrial = TextUtils.join(",", arr_Map_Trial);
+            Common.setMap_Trial(valueTrial);
+        }
+        if(MapIndex + 1 == Common.getArr_Map_Trial().length){
+            Common.setMap_Trial(Common.getMap_Trial() + "0,");
+        }
     }
 
     private void setStartRoom(){
@@ -680,14 +709,17 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
                     FadeSprite(mHeadBone_Tiny_x3);
                 }else if(iProcess == 10){
                     this.ProcessBar.object_AnimatedSprite.detachChild(mHeadBone_Tiny_x3.object_AnimatedSprite);
+                    mPointHead = 2;
                 }else if(iProcess == 6){
                     FadeSprite(mHeadBone_Tiny_x2);
                 }else if(iProcess == 5){
                     this.ProcessBar.object_AnimatedSprite.detachChild(mHeadBone_Tiny_x2.object_AnimatedSprite);
+                    mPointHead = 1;
                 }else if(iProcess == 1){
                     FadeSprite(mHeadBone_Tiny_x1);
                 }else if(iProcess == 0){
                     this.ProcessBar.object_AnimatedSprite.detachChild(mHeadBone_Tiny_x1.object_AnimatedSprite);
+                    mPointHead = 0;
                 }
             }
         }
@@ -725,20 +757,20 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
                     if(Common.getClick_button() != null){
                         Common.getClick_button().play();
                     }
-                    resetGame();
+                    resetGame(false);
                 }
-//                else if(txt_Confirm_No.contains(_event.getX(),_event.getY())){
-//                    if(Common.getClick_button() != null){
-//                        Common.getClick_button().play();
-//                    }
-//                    PressBackButton();
-//                }
+                else if(mbtnNext.object_AnimatedSprite.contains(_event.getX(),_event.getY())){
+                    if(Common.getClick_button() != null){
+                        Common.getClick_button().play();
+                    }
+                    resetGame(true);
+                }
             }else {
                 if (mummy.isTouch(_event)) {
                     Common.getMummy_hit().play();
-                    if (isClick) {
-                        setMoveForMummy(4, 1);
-                    }
+//                    if (isClick) {
+//                        setMoveForMummy(4, 1);
+//                    }
                 }
                 for (int i = 1; i < arrTrap.length; i++) {
                     if (arrTrap[i].isTouch(_event)) {
@@ -847,7 +879,7 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
                                     txtNumMultiRoom.setText(String.valueOf(Common.getMulGameStory()));
                                     mummy.object_AnimatedSprite.stopAnimation();
                                     isClick = true;
-                                    if (iCurTrend[0] == 3) setMoveForMummy(4, 1);
+//                                    if (iCurTrend[0] == 3) setMoveForMummy(4, 1);
                                     Common.getFoot_step().pause();
 
                                     if (CurRoom < NextRoom) {
@@ -869,6 +901,7 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
                                         ConfirmPanel.object_AnimatedSprite.attachChild(mbtnNext.object_AnimatedSprite);
                                         ConfirmPanel.object_AnimatedSprite.attachChild(mbtnReplay.object_AnimatedSprite);
                                         ConfirmPanel.object_AnimatedSprite.attachChild(mbtnShare.object_AnimatedSprite);
+                                        caculationGameComplete(mPointHead);
                                         ShowPanel();
                                     }
                                 }
@@ -944,9 +977,10 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
             }
         }
     }
-    @Override
-    protected void onStop() {
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
 
         if(loader != null){
             loader.stop();
@@ -957,7 +991,7 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
             loader2.stop();
             loader2.cancel(true);
         }
-        super.onStop();
+
     }
 
     @Override
@@ -973,6 +1007,8 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
             Common.getFoot_step().pause();
         }
     }
+
+
 
     @Override
     protected void onResume() {

@@ -82,12 +82,11 @@ public class ArrayTrialItemActivity extends BaseGameActivity implements SpriteOb
         this.mbtnArrowBack = new ButtonSprite(20,25,"menu/","arrow_back2.png",64,64,0,0,1,1,"mbtnArrowBack");
         txtTitle = new ChangeableText(20, 10, mFont_Black_40, "select map");
 
-        String[] strMap_Trial = Common.getMap_Trial().split(",");
-        int countMapActive = strMap_Trial.length;
+        int countMapActive = Common.getArr_Map_Trial().length;
         mMap_Trial = new int[countMapActive];
 
         for(int i = 0; i < countMapActive ; i++){
-            mMap_Trial[i] =  Integer.valueOf( strMap_Trial[i]);
+            mMap_Trial[i] =  Integer.valueOf( Common.getArr_Map_Trial()[i]);
         }
 
         listTrial_Item = new ArrayList<>();

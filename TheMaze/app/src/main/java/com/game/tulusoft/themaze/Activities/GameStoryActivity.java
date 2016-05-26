@@ -116,7 +116,7 @@ public class GameStoryActivity extends BaseGameActivity implements SpriteObjecti
     boolean isClickProhibit = true;
     boolean isClickBugs = true;
 
-    int[][] mummyAction = new int[5][];
+    int[][] mummyAction = new int[4][];
     int[][] coinAction = new int[3][];
 
     @Override
@@ -135,7 +135,7 @@ public class GameStoryActivity extends BaseGameActivity implements SpriteObjecti
         this.ConfirmPanel = new ButtonSprite(0,-548,"menu/","confirm_panel_rope_color.png",512,1024,0,0,1,1,"ConfirmPanel");
         this.Map = new ButtonSprite(paddingLeft_Map,paddingTop_Map,"gameplay/","map_gray_border.png",1024,1024,0,0,1,1,"Map");
         this.mbtnArrowBack = new ButtonSprite(20,760,"menu/","arrow_back2.png",64,64,0,0,1,1,"mbtnArrowBack");
-        this.mummy = new ButtonSprite(-object_width,0,"Objective/","mummy_114x52.png",1024,1024,0,0,11,11,"mummy");
+        this.mummy = new ButtonSprite(-object_width,0,"Objective/","mummy_52px.png",512,256,0,0,5,4,"mummy");
 
 
         this.mCoin = new ButtonSprite(-object_width,object_width,"gameplay/","coin_glass6x6.png",512,512,0,0,6,6,"mCoin");
@@ -303,10 +303,10 @@ public class GameStoryActivity extends BaseGameActivity implements SpriteObjecti
         mummyAction[1] = new int[]{5,6,7,8,9}; // right move
         mummyAction[2] = new int[]{10,11,12,13,14}; // bottom move
         mummyAction[3] = new int[]{15,16,17,18,19}; // left move
-        mummyAction[4] = new int[]{22,23,24,25,26,27,28,29,
-                30,31,32,33,34,35,36,37,38,39,
-                40,41,42,43,44,45,46,47,48,49,
-                50,51,52,53,54,55,56,57,58,59,}; // dance
+//        mummyAction[4] = new int[]{22,23,24,25,26,27,28,29,
+//                30,31,32,33,34,35,36,37,38,39,
+//                40,41,42,43,44,45,46,47,48,49,
+//                50,51,52,53,54,55,56,57,58,59,}; // dance
 
         mCoin.object_AnimatedSprite.animate(new long[]{baseSpeed, baseSpeed, baseSpeed, baseSpeed, baseSpeed, baseSpeed,
                         baseSpeed, baseSpeed, baseSpeed, baseSpeed, baseSpeed, baseSpeed,
@@ -316,7 +316,7 @@ public class GameStoryActivity extends BaseGameActivity implements SpriteObjecti
                         baseSpeed, baseSpeed, baseSpeed, baseSpeed, baseSpeed, baseSpeed},
                 0, 35, true);
 
-        setMoveForMummy(4, 1);
+//        setMoveForMummy(4, 1);
 
         setStartRoom();
 
@@ -345,9 +345,9 @@ public class GameStoryActivity extends BaseGameActivity implements SpriteObjecti
             }else {
                 if (mummy.isTouch(_event)) {
                     Common.getMummy_hit().play();
-                    if (isClick) {
-                        setMoveForMummy(4, 1);
-                    }
+//                    if (isClick) {
+//                        setMoveForMummy(4, 1);
+//                    }
                 }
                 for (int i = 1; i < arrTrap.length; i++) {
                     if (arrTrap[i].isTouch(_event)) {
@@ -457,7 +457,7 @@ public class GameStoryActivity extends BaseGameActivity implements SpriteObjecti
                                     txtNumMultiRoom.setText(String.valueOf(Common.getMulGameStory()));
                                     mummy.object_AnimatedSprite.stopAnimation();
                                     isClick = true;
-                                    if (iCurTrend[0] == 3) setMoveForMummy(4, 1);
+//                                    if (iCurTrend[0] == 3) setMoveForMummy(4, 1);
                                     Common.getFoot_step().pause();
 
                                     if (CurRoom < NextRoom) {
