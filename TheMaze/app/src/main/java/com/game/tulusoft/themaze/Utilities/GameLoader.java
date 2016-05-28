@@ -21,7 +21,7 @@ public class GameLoader extends AsyncTask<String, Integer, Boolean> {
     boolean isPaused = false;
     boolean isStop = false;
     public  CreatePoint createPoint;
-    int baseTime = 4;
+    int baseTime = 5;
     public GameLoader(int iRoom,boolean isLoader){
         createPoint = new CreatePoint();
         mRoom = iRoom;
@@ -52,7 +52,6 @@ public class GameLoader extends AsyncTask<String, Integer, Boolean> {
             int iTotalWall = 0;
             do {
                 if(isStop) return null;
-                if (isCancelled()) break;
                 createPoint.CreaateWall();
                 iTotalWall = createPoint.MapPoint.MapPointV.size() + createPoint.MapPoint.MapPointH.size();
                 publishProgress((int) ((iTotalWall / (float) 60) * 100));
@@ -66,7 +65,6 @@ public class GameLoader extends AsyncTask<String, Integer, Boolean> {
             int iprocess = 21;
             do {
                 if(isStop) return null;
-                if (isCancelled()) break;
                 while (isPaused){
                     if(isStop) return null;
                     try {

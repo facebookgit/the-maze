@@ -139,6 +139,7 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
     boolean isShowConfirmPanel = false;
     boolean isClickProhibit = true;
     boolean isClickBugs = true;
+    boolean isRunning = true;
 
     int[][] mummyAction = new int[4][];
     int[][] coinAction = new int[3][];
@@ -399,16 +400,22 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
             this.ProcessBar.object_AnimatedSprite.registerEntityModifier(movescorepanel);
         }else {
             // you lose, end of time
-            txt_Game_Over_Result.setText("mission failed");
-            this.ConfirmPanel.object_AnimatedSprite.detachChild(mbtnNext.object_AnimatedSprite);
-            this.ConfirmPanel.object_AnimatedSprite.detachChild(mbtnReplay.object_AnimatedSprite);
-            this.ConfirmPanel.object_AnimatedSprite.detachChild(mbtnShare.object_AnimatedSprite);
+            if(isRunning) {
+                isRunning = false;
+                txt_Game_Over_Result.setText("mission failed");
+                this.ConfirmPanel.object_AnimatedSprite.detachChild(mbtnNext.object_AnimatedSprite);
+                this.ConfirmPanel.object_AnimatedSprite.detachChild(mbtnReplay.object_AnimatedSprite);
+                this.ConfirmPanel.object_AnimatedSprite.detachChild(mbtnShare.object_AnimatedSprite);
 
-            this.ConfirmPanel.object_AnimatedSprite.attachChild(mbtnReplay.object_AnimatedSprite);
-            if(detectNextGame()){
-                this.ConfirmPanel.object_AnimatedSprite.attachChild(mbtnNext.object_AnimatedSprite);
+                this.ConfirmPanel.object_AnimatedSprite.attachChild(mbtnReplay.object_AnimatedSprite);
+                if (detectNextGame()) {
+                    this.ConfirmPanel.object_AnimatedSprite.attachChild(mbtnNext.object_AnimatedSprite);
+                }
+                ShowPanel();
+                if (loader2 != null) {
+                    loader2.stop();
+                }
             }
-            ShowPanel();
         }
     }
 
@@ -584,8 +591,10 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
             Common.setMap_Trial(valueTrial);
         }
         if(MapIndex + 1 == Common.getArr_Map_Trial().length){
-            Common.setMap_Trial(Common.getMap_Trial() + "0,");
+            Common.setMap_Trial(Common.getMap_Trial() + ",0,");
         }
+
+        Common.getEdit(getBaseContext()).putString(Common.Key_Config_Map_Trial, Common.getMap_Trial()).commit();
     }
 
     private void setStartRoom(){
@@ -719,7 +728,6 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
                     FadeSprite(mHeadBone_Tiny_x1);
                 }else if(iProcess == 0){
                     this.ProcessBar.object_AnimatedSprite.detachChild(mHeadBone_Tiny_x1.object_AnimatedSprite);
-                    mPointHead = 0;
                 }
             }
         }
@@ -888,21 +896,24 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
                                         Common.getReturn_door().play();
                                     }
 
-                                    if(NextRoom > mMapSelected){
-                                        if(loader2 != null){
-                                            loader2.pause();
+                                    if(NextRoom > mMapSelected) {
+                                        if (isRunning) {
+                                            isRunning = false;
+                                            if (loader2 != null) {
+                                                loader2.stop();
+                                            }
+                                            txt_Game_Over_Result.setText("mission completed");
+
+                                            ConfirmPanel.object_AnimatedSprite.detachChild(mbtnNext.object_AnimatedSprite);
+                                            ConfirmPanel.object_AnimatedSprite.detachChild(mbtnReplay.object_AnimatedSprite);
+                                            ConfirmPanel.object_AnimatedSprite.detachChild(mbtnShare.object_AnimatedSprite);
+
+                                            ConfirmPanel.object_AnimatedSprite.attachChild(mbtnNext.object_AnimatedSprite);
+                                            ConfirmPanel.object_AnimatedSprite.attachChild(mbtnReplay.object_AnimatedSprite);
+                                            ConfirmPanel.object_AnimatedSprite.attachChild(mbtnShare.object_AnimatedSprite);
+                                            caculationGameComplete(mPointHead);
+                                            ShowPanel();
                                         }
-                                        txt_Game_Over_Result.setText("mission completed");
-
-                                        ConfirmPanel.object_AnimatedSprite.detachChild(mbtnNext.object_AnimatedSprite);
-                                        ConfirmPanel.object_AnimatedSprite.detachChild(mbtnReplay.object_AnimatedSprite);
-                                        ConfirmPanel.object_AnimatedSprite.detachChild(mbtnShare.object_AnimatedSprite);
-
-                                        ConfirmPanel.object_AnimatedSprite.attachChild(mbtnNext.object_AnimatedSprite);
-                                        ConfirmPanel.object_AnimatedSprite.attachChild(mbtnReplay.object_AnimatedSprite);
-                                        ConfirmPanel.object_AnimatedSprite.attachChild(mbtnShare.object_AnimatedSprite);
-                                        caculationGameComplete(mPointHead);
-                                        ShowPanel();
                                     }
                                 }
                             };

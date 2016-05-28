@@ -21,28 +21,78 @@ import java.util.ArrayList;
 public class TrialItem implements InterfaceSprite, SpriteObjective.SpriteObjectiveFinishAnimationListener {
 
     ButtonSprite mbtnMainBackground;
-//    ButtonSprite mbtnHead1;
-
     ChangeableText txtNumRoom;
     int inumroom = 0;
     Context mMainArrayContext;
+    Engine mMainEngine;
+
+    Font font_Active;
+    Font font_inActive;
 
     private ArrayList<ButtonSprite> arrHeadBone;
     private boolean isActive = false;
 
-
     public TrialItem(int _inumroom, int _iheadbone, int _x, int _y, Font _font1, Font _font2, boolean _active){
         Font font = _font2;
         if(_active) font = _font1;
+        font_Active = _font1;
+        font_inActive = _font2;
         this.mbtnMainBackground = new ButtonSprite(_x, _y, "menu/", "bg_trip_headbone.png", 128, 256, 0, 0, 1, 1,"mbtnMainBackground");
         txtNumRoom = new ChangeableText(20, 60, font, String.valueOf(_inumroom),2);
         inumroom = _inumroom;
         isActive = _active;
+        if(_iheadbone > 3) _iheadbone = 3;
+
         arrHeadBone = new ArrayList<>();
         for(int i = 0; i < _iheadbone ; i++){
             ButtonSprite mbtnHead = new ButtonSprite(i * 35,103,"menu/","head_bone_g.png",64,64,0,0,1,1,"mbtnHead");
             arrHeadBone.add(mbtnHead);
         }
+    }
+
+    public void UpdateHeadPoint(int _iheadbone){
+        if(_iheadbone > 3) _iheadbone = 3;
+        if(mMainEngine != null && mMainArrayContext!= null) {
+            if (arrHeadBone != null) {
+                for (int i = 0; i < arrHeadBone.size(); i++) {
+                    arrHeadBone.get(i).detachSelf();
+                }
+            }
+            arrHeadBone = new ArrayList<>();
+            for (int i = 0; i < _iheadbone; i++) {
+                ButtonSprite mbtnHead = new ButtonSprite(i * 35, 103, "menu/", "head_bone_g.png", 64, 64, 0, 0, 1, 1, "mbtnHead");
+                mbtnHead.onLoadResources(mMainEngine, mMainArrayContext);
+                mbtnHead.createScene();
+                if (mbtnMainBackground != null) {
+                    mbtnMainBackground.object_AnimatedSprite.attachChild(mbtnHead.object_AnimatedSprite);
+                }
+                arrHeadBone.add(mbtnHead);
+            }
+        }
+    }
+
+    public void UpdateActive(boolean _isActive){
+        isActive = _isActive;
+        if(txtNumRoom != null) txtNumRoom.detachSelf();
+        if(isActive) {
+            this.mbtnMainBackground.mSpriteObjectiveFinishAnimationListener = this;
+            txtNumRoom = new ChangeableText(20, 60, font_Active, String.valueOf(inumroom),2);
+            if( mbtnMainBackground!= null && mbtnMainBackground.object_AnimatedSprite != null) {
+                mbtnMainBackground.object_AnimatedSprite.attachChild(txtNumRoom);
+                txtNumRoom.setPosition(this.mbtnMainBackground.object_AnimatedSprite.getWidth() / 2  - txtNumRoom.getWidth() / 2,
+                        (this.mbtnMainBackground.object_AnimatedSprite.getHeight() - 40) / 2 - txtNumRoom.getHeight() / 2);
+            }
+        }
+        else {
+            this.mbtnMainBackground.mSpriteObjectiveFinishAnimationListener = null;
+            txtNumRoom = new ChangeableText(20, 60, font_inActive, String.valueOf(inumroom),2);
+            if( mbtnMainBackground!= null && mbtnMainBackground.object_AnimatedSprite != null) {
+                mbtnMainBackground.object_AnimatedSprite.attachChild(txtNumRoom);
+                txtNumRoom.setPosition(this.mbtnMainBackground.object_AnimatedSprite.getWidth() / 2  - txtNumRoom.getWidth() / 2,
+                        (this.mbtnMainBackground.object_AnimatedSprite.getHeight() - 40) / 2 - txtNumRoom.getHeight() / 2);
+            }
+        }
+        this.mbtnMainBackground.setIsButtonFlip(isActive);
     }
 
     @Override
@@ -52,6 +102,7 @@ public class TrialItem implements InterfaceSprite, SpriteObjective.SpriteObjecti
             arrHeadBone.get(i).onLoadResources(mEngine, mContext);
         }
         mMainArrayContext = mContext;
+        mMainEngine = mEngine;
     }
 
     @Override

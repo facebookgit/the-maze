@@ -99,6 +99,23 @@ public class ArrayTrialItemActivity extends BaseGameActivity implements SpriteOb
         return engine;
     }
 
+    private void updateArrayTrial(){
+        int countMapActive = Common.getArr_Map_Trial().length;
+        mMap_Trial = new int[countMapActive];
+
+        for(int i = 0; i < countMapActive ; i++){
+            mMap_Trial[i] =  Integer.valueOf( Common.getArr_Map_Trial()[i]);
+            if(mMap_Trial[i] > 3) mMap_Trial[i] = 3;
+        }
+
+        if(listTrial_Item != null){
+            for(int i = 0; i < countMapActive ; i++){
+                listTrial_Item.get(i).UpdateHeadPoint(mMap_Trial[i]);
+                listTrial_Item.get(i).UpdateActive(true);
+            }
+        }
+    }
+
     @Override
     public void onLoadResources() {
         this.mBitmapTextureAtlas_bg = new BitmapTextureAtlas(1024, 1024, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
@@ -160,6 +177,7 @@ public class ArrayTrialItemActivity extends BaseGameActivity implements SpriteOb
     @Override
     protected void onResume() {
         super.onResume();
+        updateArrayTrial();
         if(Common.theme_Music != null && Common.getIsSound()){
             Common.theme_Music.play();
         }
