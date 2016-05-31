@@ -6,6 +6,7 @@ import com.game.tulusoft.themaze.Interface.InterfaceSprite;
 import com.game.tulusoft.themaze.Utilities.Common;
 
 import org.anddev.andengine.engine.Engine;
+import org.anddev.andengine.engine.options.RenderOptions;
 import org.anddev.andengine.entity.IEntity;
 import org.anddev.andengine.entity.modifier.IEntityModifier;
 import org.anddev.andengine.entity.modifier.ScaleModifier;
@@ -16,6 +17,7 @@ import org.anddev.andengine.opengl.texture.TextureOptions;
 import org.anddev.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.anddev.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
 import org.anddev.andengine.opengl.texture.region.TiledTextureRegion;
+import org.anddev.andengine.opengl.view.GLSurfaceView;
 import org.anddev.andengine.util.modifier.IModifier;
 
 /**
@@ -161,6 +163,8 @@ public class SpriteObjective implements InterfaceSprite {
         this.object_TiledTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.object_BitmapTextureAtlas, mContext,
                 this._imgbutton, this.fromxTiledTextureRegion, this.fromyTiledTextureRegion, this.colTiledTextureRegion, this.rowTiledTextureRegion);
         mEngine.getTextureManager().loadTexture(this.object_BitmapTextureAtlas);
+
+        
     }
 
     @Override

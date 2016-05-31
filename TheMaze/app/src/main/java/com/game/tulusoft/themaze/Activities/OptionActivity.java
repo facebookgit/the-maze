@@ -1,7 +1,11 @@
 package com.game.tulusoft.themaze.Activities;
 
 import android.content.Intent;
+import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -13,10 +17,15 @@ import com.facebook.FacebookException;
 import com.facebook.Profile;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.model.SharePhoto;
+import com.facebook.share.model.SharePhotoContent;
+import com.facebook.share.widget.ShareDialog;
 import com.game.tulusoft.themaze.Objective.ButtonSprite;
 import com.game.tulusoft.themaze.Objective.SpriteObjective;
 import com.game.tulusoft.themaze.R;
 import com.game.tulusoft.themaze.Utilities.Common;
+import com.game.tulusoft.themaze.Utilities.CreteBitmapScoreToShare;
 
 import org.anddev.andengine.engine.Engine;
 import org.anddev.andengine.engine.camera.Camera;
@@ -34,6 +43,14 @@ import org.anddev.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.anddev.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
 import org.anddev.andengine.opengl.texture.region.TextureRegion;
 import org.anddev.andengine.ui.activity.BaseGameActivity;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.Buffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+
+import javax.microedition.khronos.opengles.GL10;
 
 /**
  * Created by Shazam on 5/5/2016.
@@ -192,6 +209,7 @@ public class OptionActivity extends BaseGameActivity implements SpriteObjective.
         this.mbtnStore.onLoadScene(this.mScene);
         this.mbtnFacebook.onLoadScene(this.mScene);
         this.mbtnArrowBack.onLoadScene(this.mScene);
+
         return this.mScene;
     }
 
@@ -209,6 +227,7 @@ public class OptionActivity extends BaseGameActivity implements SpriteObjective.
         this.mbtnRope_Sound.mSpriteObjectiveTouchListener = this;
         this.mbtnRope_Music.mSpriteObjectiveTouchListener = this;
         this.mbtnFacebook.mSpriteObjectiveTouchListener = this;
+        this.mbtnStore.mSpriteObjectiveFinishAnimationListener = this;
         this.mbtnFacebook.mSpriteObjectiveFinishAnimationListener = this;
         this.mbtnArrowBack.mSpriteObjectiveFinishAnimationListener = this;
 
@@ -305,6 +324,33 @@ public class OptionActivity extends BaseGameActivity implements SpriteObjective.
         }
         else if(_sender.getName().equals(this.mbtnArrowBack.getName())){
             finish();
+        }
+        else if(_sender.getName().equals(this.mbtnStore.getName())){
+
+            AssetManager assetManager = getBaseContext().getAssets();
+
+            InputStream istr;
+            Bitmap bitmap = null;
+            try {
+                istr = assetManager.open("gameplay/cus_Score_Share_f.png");
+                bitmap = BitmapFactory.decodeStream(istr);
+            } catch (IOException e) {
+                // handle exception
+            }
+
+            CreteBitmapScoreToShare creteBitmapScoreToShare = new CreteBitmapScoreToShare(1,2,1,1,1,getBaseContext());
+
+            SharePhoto photo = new SharePhoto.Builder()
+                    .setBitmap(creteBitmapScoreToShare.getmBitmapScore())
+                    .build();
+            SharePhotoContent content = new SharePhotoContent.Builder()
+                    .addPhoto(photo)
+                    .build();
+//            ShareLinkContent content = new ShareLinkContent.Builder()
+//                    .setContentUrl(Uri.parse("https://developers.facebook.com"))
+//                    .build();
+
+            ShareDialog.show(this,content);
         }
     }
 

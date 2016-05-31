@@ -5,12 +5,15 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.widget.Toast;
 
+import com.facebook.share.model.SharePhoto;
+import com.facebook.share.model.SharePhotoContent;
+import com.facebook.share.widget.ShareDialog;
 import com.game.tulusoft.themaze.Objective.ButtonSprite;
 import com.game.tulusoft.themaze.Objective.SpriteObjective;
 import com.game.tulusoft.themaze.Utilities.Algorithms;
 import com.game.tulusoft.themaze.Utilities.Common;
+import com.game.tulusoft.themaze.Utilities.CreteBitmapScoreToShare;
 import com.game.tulusoft.themaze.Utilities.GameLoader;
 import com.game.tulusoft.themaze.Utilities.GameStory;
 import com.game.tulusoft.themaze.Utilities.PointArray;
@@ -25,7 +28,6 @@ import org.anddev.andengine.entity.modifier.AlphaModifier;
 import org.anddev.andengine.entity.modifier.IEntityModifier;
 import org.anddev.andengine.entity.modifier.MoveModifier;
 import org.anddev.andengine.entity.modifier.MoveYModifier;
-import org.anddev.andengine.entity.modifier.ScaleModifier;
 import org.anddev.andengine.entity.modifier.SequenceEntityModifier;
 import org.anddev.andengine.entity.scene.Scene;
 import org.anddev.andengine.entity.scene.background.SpriteBackground;
@@ -41,10 +43,7 @@ import org.anddev.andengine.opengl.texture.region.TextureRegion;
 import org.anddev.andengine.ui.activity.BaseGameActivity;
 import org.anddev.andengine.util.modifier.IModifier;
 
-import java.net.CookieManager;
 import java.util.ArrayList;
-
-import javax.microedition.khronos.opengles.GL10;
 
 /**
  * Created by Shazam on 3/9/2016.
@@ -132,6 +131,10 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
     int iRandomProhibit;
     int mPointHead = 3;
 
+    int mUsedBug = 0;
+    int mUsedProhibit = 0;
+    int mScore = 0;
+
     int baseSpeed = Common.baseSpeed;
     int object_width = Common.getObject_width();
 
@@ -145,6 +148,8 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
     int[][] coinAction = new int[3][];
 
     float HeadBone_SpriteAlpha = 0;
+
+    CreteBitmapScoreToShare mCreateBitMapShareFacebook;
 
     @Override
     public Engine onLoadEngine() {
@@ -230,6 +235,10 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
         if (extras != null) {
             mMapSelected = extras.getInt(Common.Key_Game_Select_Map_Trial,5);
         }
+
+        //Create Bitmap share Facebook
+        mCreateBitMapShareFacebook = new CreteBitmapScoreToShare(mMapSelected,0,0,0,0,getBaseContext());
+
         return engine;
     }
 
@@ -349,6 +358,10 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
 
         txtNumCurrentRoom.setText("1/" + String.valueOf(mMapSelected));
 
+        mUsedBug = 0;
+        mUsedProhibit = 0;
+        mPointHead = 3;
+        mScore = 0;
 
         loader = new GameLoader(mMapSelected,true);
         loader.execute("");
@@ -539,10 +552,13 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
         ShowPanel();
         Intent intent = getIntent();
         if(_isnextGame) {
-            intent.putExtra(Common.Key_Game_Select_Map_Trial, mMapSelected++);
+            mMapSelected += 1;
+            intent.putExtra(Common.Key_Game_Select_Map_Trial, mMapSelected);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
         }
-        finish();
         startActivity(intent);
+        finish();
     }
 
 
@@ -750,6 +766,24 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
         _Item.object_AnimatedSprite.registerEntityModifier(sequenceEntityModifier);
     }
 
+    private void ShareToFacebook(){
+        if(mCreateBitMapShareFacebook != null){
+            mCreateBitMapShareFacebook.setMiBug(mUsedBug);
+            mCreateBitMapShareFacebook.setMiHeadPoint(mPointHead);
+            mCreateBitMapShareFacebook.setMiProhibit(mUsedProhibit);
+            mCreateBitMapShareFacebook.setMlScore(mScore);
+
+            SharePhoto photo = new SharePhoto.Builder()
+                    .setBitmap(mCreateBitMapShareFacebook.getmBitmapScore())
+                    .build();
+            SharePhotoContent content = new SharePhotoContent.Builder()
+                    .addPhoto(photo)
+                    .build();
+
+            ShareDialog.show(this,content);
+        }
+    }
+
     @Override
     public void FinishAnimation(SpriteObjective _sender) {
         if(_sender.getName().equals(this.mbtnArrowBack.getName())){
@@ -772,6 +806,12 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
                         Common.getClick_button().play();
                     }
                     resetGame(true);
+                }
+                else if(mbtnShare.object_AnimatedSprite.contains(_event.getX(),_event.getY())){
+                    if(Common.getClick_button() != null){
+                        Common.getClick_button().play();
+                    }
+                    ShareToFacebook();
                 }
             }else {
                 if (mummy.isTouch(_event)) {
