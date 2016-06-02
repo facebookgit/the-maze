@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 
 import com.facebook.share.model.SharePhoto;
@@ -72,6 +73,9 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
     private BitmapTextureAtlas mFontTexture_Red_60;
     Font mFont_Red_60;
 
+    private BitmapTextureAtlas mFontTexture_Blue_80;
+    Font mFont_Blue_80;
+
     private BitmapTextureAtlas mFontTexture_Yellow_40;
     Font mFont_Yellow_40;
 
@@ -86,6 +90,8 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
     ChangeableText txtNumCoin;
     ChangeableText txtNumBugs;
     ChangeableText txtNumProhibit;
+
+    ChangeableText txtNumScore;
 
     ChangeableText txt_Game_Over_Result;
 
@@ -131,10 +137,6 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
     int iRandomProhibit;
     int mPointHead = 3;
 
-    int mUsedBug = 0;
-    int mUsedProhibit = 0;
-    int mScore = 0;
-
     int baseSpeed = Common.baseSpeed;
     int object_width = Common.getObject_width();
 
@@ -146,6 +148,18 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
 
     int[][] mummyAction = new int[4][];
     int[][] coinAction = new int[3][];
+    private Handler handler = new Handler();
+    private Thread ScoredThread;
+    int baseTime = 5;
+    double mScore = 0;
+    int iOneSec = 1000;
+    int iOneMinus = 60;
+    double mTotalTime = 0;
+    int BaseScore = 200;
+
+    int mUsedBug = 0;
+    int mUsedProhibit = 0;
+    boolean isUsedBug = true;
 
     float HeadBone_SpriteAlpha = 0;
 
@@ -171,9 +185,9 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
 
         this.mLockDoor = new ButtonSprite(-object_width,object_width,"gameplay/","lock_door.png",64,64,0,0,1,1,"mLockDoor");
 
-        this.mRec_Coin = new ButtonSprite(290,37,"gameplay/","rec_coin.png",64,64,0,0,1,1,"mRec_Coin");
-        this.mRec_Bug = new ButtonSprite(290,82,"gameplay/","rec_bug.png",64,64,0,0,1,1,"mRec_Bug");
-        this.mRec_Prohibit = new ButtonSprite(290,127,"gameplay/","rec_prohibit.png",64,64,0,0,1,1,"mRec_Prohibit");
+        this.mRec_Coin = new ButtonSprite(340,37,"gameplay/","rec_coin.png",64,64,0,0,1,1,"mRec_Coin");
+        this.mRec_Bug = new ButtonSprite(340,82,"gameplay/","rec_bug.png",64,64,0,0,1,1,"mRec_Bug");
+        this.mRec_Prohibit = new ButtonSprite(340,127,"gameplay/","rec_prohibit.png",64,64,0,0,1,1,"mRec_Prohibit");
 
         this.mbtnNext = new ButtonSprite(60,460,"gameplay/","next_button.png",64,64,0,0,1,1,"mbtnNext");
         this.mbtnReplay = new ButtonSprite(160,460,"gameplay/","replay_button.png",128,128,0,0,1,1,"mbtnReplay");
@@ -205,6 +219,9 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
         this.mFontTexture_Red_60 = new BitmapTextureAtlas(256, 256, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
         this.mFont_Red_60 = FontFactory.createFromAsset(this.mFontTexture_Red_60, this, "youmurdererbb_reg.ttf", 60, true, Color.rgb(180,102,1));
 
+        this.mFontTexture_Blue_80 = new BitmapTextureAtlas(256, 256, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+        this.mFont_Blue_80 = FontFactory.createFromAsset(this.mFontTexture_Blue_80, this, "youmurdererbb_reg.ttf", 60, true, Color.rgb(59,176,230));
+
         this.mFontTexture_Yellow_40 = new BitmapTextureAtlas(256, 256, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
         this.mFont_Yellow_40 = FontFactory.createFromAsset(this.mFontTexture_Yellow_40, this, "youmurdererbb_reg.ttf", 50, true, Color.rgb(30,38,11));
 
@@ -214,10 +231,13 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
         engine.getTextureManager().loadTexture(this.mFontTexture_Red_60);
         engine.getFontManager().loadFont(this.mFont_Red_60);
 
+        engine.getTextureManager().loadTexture(this.mFontTexture_Blue_80);
+        engine.getFontManager().loadFont(this.mFont_Blue_80);
+
         engine.getTextureManager().loadTexture(this.mFontTexture_Yellow_40);
         engine.getFontManager().loadFont(this.mFont_Yellow_40);
 
-        txtMap = new ChangeableText(60, 40, mFont_Black_60, "Map :");
+        txtMap = new ChangeableText(60, 40, mFont_Black_60, "score :");
         txtMultiRoom = new ChangeableText(60, 80, mFont_Black_60, "Multi :");
         txtCurrentRoom = new ChangeableText(60, 120, mFont_Black_60, "Curent :");
 
@@ -225,9 +245,11 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
         txtNumMultiRoom = new ChangeableText(180, 80, mFont_Red_60, "0",5);
         txtNumCurrentRoom = new ChangeableText(210, 120, mFont_Red_60, "1/5",5);
 
-        txtNumCoin = new ChangeableText(340, 34, mFont_Red_60, "0",5);
-        txtNumBugs = new ChangeableText(340, 79, mFont_Red_60, "0",5);
-        txtNumProhibit = new ChangeableText(340, 124, mFont_Red_60, "0",5);
+        txtNumCoin = new ChangeableText(390, 34, mFont_Red_60, "0",5);
+        txtNumBugs = new ChangeableText(390, 79, mFont_Red_60, "0",5);
+        txtNumProhibit = new ChangeableText(390, 124, mFont_Red_60, "0",5);
+
+        txtNumScore = new ChangeableText(200, 40, mFont_Blue_80, "0231",6);
 
         txt_Game_Over_Result = new ChangeableText(100, 410, mFont_Yellow_40, "mission completed");
 
@@ -363,72 +385,88 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
         mPointHead = 3;
         mScore = 0;
 
-        loader = new GameLoader(mMapSelected,true);
+        loader = new GameLoader(mMapSelected,0);
         loader.execute("");
         loader.mLoadComplete = this;
     }
 
     @Override
-    public void LoadComplete(boolean _IsLoader) {
-        if(_IsLoader) {
-            if (this.ProcessBar != null) {
-                this.ProcessBar.getObject_AnimatedSprite().animate(new long[]{100}, new int[]{20}, 1);
+    public void LoadComplete(int _IsLoader) {
+        switch(_IsLoader) {
+            case 0: // Loader
+            {
+                if (this.ProcessBar != null) {
+                    this.ProcessBar.getObject_AnimatedSprite().animate(new long[]{100}, new int[]{20}, 1);
+                }
+
+                MoveModifier movescorepanel = new MoveModifier(0.2f, this.ScorePanel.object_AnimatedSprite.getX(), 5, this.ScorePanel.object_AnimatedSprite.getY(), 10);
+                this.ScorePanel.object_AnimatedSprite.registerEntityModifier(movescorepanel);
+                movescorepanel = new MoveModifier(0.2f, this.Map.object_AnimatedSprite.getX(), paddingLeft_Map, this.Map.object_AnimatedSprite.getY(), paddingTop_Map);
+                this.Map.object_AnimatedSprite.registerEntityModifier(movescorepanel);
+                movescorepanel = new MoveModifier(0.2f, this.Map.object_AnimatedSprite.getX(), 10, this.Map.object_AnimatedSprite.getY(), 765);
+                this.mbtnArrowBack.object_AnimatedSprite.registerEntityModifier(movescorepanel);
+                this.mbtnArrowBack.mSpriteObjectiveFinishAnimationListener = this;
+
+                movescorepanel = new MoveModifier(0.2f, this.Map.object_AnimatedSprite.getX(), 340, this.Map.object_AnimatedSprite.getY(), 37);
+                this.mRec_Coin.object_AnimatedSprite.registerEntityModifier(movescorepanel);
+                movescorepanel = new MoveModifier(0.2f, this.Map.object_AnimatedSprite.getX(), 340, this.Map.object_AnimatedSprite.getY(), 82);
+                this.mRec_Bug.object_AnimatedSprite.registerEntityModifier(movescorepanel);
+                movescorepanel = new MoveModifier(0.2f, this.Map.object_AnimatedSprite.getX(), 340, this.Map.object_AnimatedSprite.getY(), 127);
+                this.mRec_Prohibit.object_AnimatedSprite.registerEntityModifier(movescorepanel);
+
+                movescorepanel = new MoveModifier(0.2f, this.ProcessBar.object_AnimatedSprite.getX(), this.ProcessBar.object_AnimatedSprite.getX() + 20,
+                        this.ProcessBar.object_AnimatedSprite.getY(), 750) {
+                    @Override
+                    protected void onModifierFinished(IEntity pItem) {
+                        super.onModifierFinished(pItem);
+
+                        mSprite_bg.attachChild(txtMap);
+                        mSprite_bg.attachChild(txtMultiRoom);
+                        mSprite_bg.attachChild(txtCurrentRoom);
+
+//                        mSprite_bg.attachChild(txtNumMap);
+                        mSprite_bg.attachChild(txtNumMultiRoom);
+                        mSprite_bg.attachChild(txtNumCurrentRoom);
+
+                        mSprite_bg.attachChild(txtNumCoin);
+                        mSprite_bg.attachChild(txtNumBugs);
+                        mSprite_bg.attachChild(txtNumProhibit);
+                        mSprite_bg.attachChild(txtNumScore);
+                        performLoadComplete();
+                    }
+                };
+                this.ProcessBar.object_AnimatedSprite.registerEntityModifier(movescorepanel);
             }
+            break;
+            case 1: // Counter
+            {
+                // you lose, end of time
+                if(isRunning) {
+                    isRunning = false;
+                    txt_Game_Over_Result.setText("mission failed");
+                    this.ConfirmPanel.object_AnimatedSprite.detachChild(mbtnNext.object_AnimatedSprite);
+                    this.ConfirmPanel.object_AnimatedSprite.detachChild(mbtnReplay.object_AnimatedSprite);
+                    this.ConfirmPanel.object_AnimatedSprite.detachChild(mbtnShare.object_AnimatedSprite);
 
-            MoveModifier movescorepanel = new MoveModifier(0.2f, this.ScorePanel.object_AnimatedSprite.getX(), 5, this.ScorePanel.object_AnimatedSprite.getY(), 10);
-            this.ScorePanel.object_AnimatedSprite.registerEntityModifier(movescorepanel);
-            movescorepanel = new MoveModifier(0.2f, this.Map.object_AnimatedSprite.getX(), paddingLeft_Map, this.Map.object_AnimatedSprite.getY(), paddingTop_Map);
-            this.Map.object_AnimatedSprite.registerEntityModifier(movescorepanel);
-            movescorepanel = new MoveModifier(0.2f, this.Map.object_AnimatedSprite.getX(), 10, this.Map.object_AnimatedSprite.getY(), 765);
-            this.mbtnArrowBack.object_AnimatedSprite.registerEntityModifier(movescorepanel);
-            this.mbtnArrowBack.mSpriteObjectiveFinishAnimationListener = this;
-
-            movescorepanel = new MoveModifier(0.2f, this.Map.object_AnimatedSprite.getX(), 290, this.Map.object_AnimatedSprite.getY(), 37);
-            this.mRec_Coin.object_AnimatedSprite.registerEntityModifier(movescorepanel);
-            movescorepanel = new MoveModifier(0.2f, this.Map.object_AnimatedSprite.getX(), 290, this.Map.object_AnimatedSprite.getY(), 82);
-            this.mRec_Bug.object_AnimatedSprite.registerEntityModifier(movescorepanel);
-            movescorepanel = new MoveModifier(0.2f, this.Map.object_AnimatedSprite.getX(), 290, this.Map.object_AnimatedSprite.getY(), 127);
-            this.mRec_Prohibit.object_AnimatedSprite.registerEntityModifier(movescorepanel);
-
-            movescorepanel = new MoveModifier(0.2f, this.ProcessBar.object_AnimatedSprite.getX(), this.ProcessBar.object_AnimatedSprite.getX() + 20,
-                    this.ProcessBar.object_AnimatedSprite.getY(), 750) {
-                @Override
-                protected void onModifierFinished(IEntity pItem) {
-                    super.onModifierFinished(pItem);
-
-                    mSprite_bg.attachChild(txtMap);
-                    mSprite_bg.attachChild(txtMultiRoom);
-                    mSprite_bg.attachChild(txtCurrentRoom);
-
-                    mSprite_bg.attachChild(txtNumMap);
-                    mSprite_bg.attachChild(txtNumMultiRoom);
-                    mSprite_bg.attachChild(txtNumCurrentRoom);
-
-                    mSprite_bg.attachChild(txtNumCoin);
-                    mSprite_bg.attachChild(txtNumBugs);
-                    mSprite_bg.attachChild(txtNumProhibit);
-                    performLoadComplete();
-                }
-            };
-            this.ProcessBar.object_AnimatedSprite.registerEntityModifier(movescorepanel);
-        }else {
-            // you lose, end of time
-            if(isRunning) {
-                isRunning = false;
-                txt_Game_Over_Result.setText("mission failed");
-                this.ConfirmPanel.object_AnimatedSprite.detachChild(mbtnNext.object_AnimatedSprite);
-                this.ConfirmPanel.object_AnimatedSprite.detachChild(mbtnReplay.object_AnimatedSprite);
-                this.ConfirmPanel.object_AnimatedSprite.detachChild(mbtnShare.object_AnimatedSprite);
-
-                this.ConfirmPanel.object_AnimatedSprite.attachChild(mbtnReplay.object_AnimatedSprite);
-                if (detectNextGame()) {
-                    this.ConfirmPanel.object_AnimatedSprite.attachChild(mbtnNext.object_AnimatedSprite);
-                }
-                ShowPanel();
-                if (loader2 != null) {
-                    loader2.stop();
+                    this.ConfirmPanel.object_AnimatedSprite.attachChild(mbtnReplay.object_AnimatedSprite);
+                    if (detectNextGame()) {
+                        this.ConfirmPanel.object_AnimatedSprite.attachChild(mbtnNext.object_AnimatedSprite);
+                    }
+                    ShowPanel();
+                    if (loader2 != null) {
+                        loader2.stop();
+                    }
+                    if(ScoredThread != null) {
+                        ScoredThread.interrupt();
+                    }
                 }
             }
+            break;
+            case 2: // Scored
+
+                break;
+            default:
+                break;
         }
     }
 
@@ -449,11 +487,6 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
         mummyAction[1] = new int[]{5,6,7,8,9}; // right move
         mummyAction[2] = new int[]{10,11,12,13,14}; // bottom move
         mummyAction[3] = new int[]{15,16,17,18,19}; // left move
-//        mummyAction[4] = new int[]{22,23,24,25,26,27,28,29,
-//                30,31,32,33,34,35,36,37,38,39,
-//                40,41,42,43,44,45,46,47,48,49,
-//                50,51,52,53,54,55,56,57,58,59,}; // dance
-
         mCoin.object_AnimatedSprite.animate(new long[]{baseSpeed, baseSpeed, baseSpeed, baseSpeed, baseSpeed, baseSpeed,
                         baseSpeed, baseSpeed, baseSpeed, baseSpeed, baseSpeed, baseSpeed,
                         baseSpeed, baseSpeed, baseSpeed, baseSpeed, baseSpeed, baseSpeed,
@@ -462,11 +495,9 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
                         baseSpeed, baseSpeed, baseSpeed, baseSpeed, baseSpeed, baseSpeed},
                 0, 35, true);
 
-//        setMoveForMummy(4, 1);
-
         setStartRoom();
 
-        txtNumMap.setText(String.valueOf(mMapSelected));
+//        txtNumMap.setText(String.valueOf(mMapSelected));
         txtNumMultiRoom.setText(String.valueOf(Common.getMulGameStory()));
 
         txtNumCoin.setText(String.valueOf(Common.getCoin_Local()));
@@ -490,9 +521,36 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
         this.ProcessBar.object_AnimatedSprite.attachChild(mHeadBone_Tiny_x2.object_AnimatedSprite);
         this.ProcessBar.object_AnimatedSprite.attachChild(mHeadBone_Tiny_x3.object_AnimatedSprite);
 
-        loader2 = new GameLoader(mMapSelected,false);
+        loader2 = new GameLoader(mMapSelected,1);
         loader2.execute("");
         loader2.mLoadComplete = this;
+
+
+        mTotalTime = ((mMapSelected - 5) * 0.5 + baseTime) * iOneMinus;
+        mScore = mTotalTime + mMapSelected * BaseScore;
+        txtNumScore.setText(String.valueOf((int) mScore));
+
+        ScoredThread=  new Thread(new Runnable() {
+            public void run() {
+                while (mScore > 0){
+                    try {
+                        Thread.sleep(iOneSec);
+                    }
+                    catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    handler.post(new Runnable() {
+                        public void run() {
+                            txtNumScore.setText(String.valueOf((int) mScore));
+                        }
+                    });
+                    mScore--;
+                }
+            }
+
+        });
+        ScoredThread.start();
     }
 
     private void resetGame(boolean _isnextGame){
@@ -547,6 +605,9 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
         if(loader2 != null){
             loader2.stop();
             loader2.cancel(true);
+        }
+        if(ScoredThread != null) {
+            ScoredThread.interrupt();
         }
 
         ShowPanel();
@@ -617,6 +678,8 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
         resetCurrentTrap();
         setTrapIntoMap();
         setWall();
+        isUsedBug = isClickBugs;
+
         isClickProhibit = true;
         isClickBugs = true;
         iRandomProhibit = 0;
@@ -719,33 +782,47 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
     }
 
     @Override
-    public void iProcessChange(int iProcess, boolean _IsLoader) {
-        if(_IsLoader) {
-            if (this.ProcessBar != null) {
-                this.ProcessBar.getObject_AnimatedSprite().animate(new long[]{100}, new int[]{
-                        iProcess / 5}, 1);
-            }
-        }else {
-            if (this.ProcessBar != null) {
-                this.ProcessBar.getObject_AnimatedSprite().animate(new long[]{100}, new int[]{
-                        iProcess}, 1);
-
-                if(iProcess == 11){
-                    FadeSprite(mHeadBone_Tiny_x3);
-                }else if(iProcess == 10){
-                    this.ProcessBar.object_AnimatedSprite.detachChild(mHeadBone_Tiny_x3.object_AnimatedSprite);
-                    mPointHead = 2;
-                }else if(iProcess == 6){
-                    FadeSprite(mHeadBone_Tiny_x2);
-                }else if(iProcess == 5){
-                    this.ProcessBar.object_AnimatedSprite.detachChild(mHeadBone_Tiny_x2.object_AnimatedSprite);
-                    mPointHead = 1;
-                }else if(iProcess == 1){
-                    FadeSprite(mHeadBone_Tiny_x1);
-                }else if(iProcess == 0){
-                    this.ProcessBar.object_AnimatedSprite.detachChild(mHeadBone_Tiny_x1.object_AnimatedSprite);
+    public void iProcessChange(int iProcess, int _IsLoader) {
+        switch(_IsLoader) {
+            case 0: // Loader
+            {
+                if (this.ProcessBar != null) {
+                    this.ProcessBar.getObject_AnimatedSprite().animate(new long[]{100}, new int[]{
+                            iProcess / 5}, 1);
                 }
             }
+            break;
+            case 1: // Counter
+            {
+                if (this.ProcessBar != null) {
+                    this.ProcessBar.getObject_AnimatedSprite().animate(new long[]{100}, new int[]{
+                            iProcess}, 1);
+
+                    if (iProcess == 11) {
+                        FadeSprite(mHeadBone_Tiny_x3);
+                    } else if (iProcess == 10) {
+                        this.ProcessBar.object_AnimatedSprite.detachChild(mHeadBone_Tiny_x3.object_AnimatedSprite);
+                        mPointHead = 2;
+                    } else if (iProcess == 6) {
+                        FadeSprite(mHeadBone_Tiny_x2);
+                    } else if (iProcess == 5) {
+                        this.ProcessBar.object_AnimatedSprite.detachChild(mHeadBone_Tiny_x2.object_AnimatedSprite);
+                        mPointHead = 1;
+                    } else if (iProcess == 1) {
+                        FadeSprite(mHeadBone_Tiny_x1);
+                    } else if (iProcess == 0) {
+                        this.ProcessBar.object_AnimatedSprite.detachChild(mHeadBone_Tiny_x1.object_AnimatedSprite);
+                    }
+                }
+            }
+            break;
+            case 2: // Scored
+            {
+                txtNumScore.setText(String.valueOf(iProcess));
+            }
+                break;
+            default:
+                break;
         }
     }
 
@@ -771,7 +848,7 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
             mCreateBitMapShareFacebook.setMiBug(mUsedBug);
             mCreateBitMapShareFacebook.setMiHeadPoint(mPointHead);
             mCreateBitMapShareFacebook.setMiProhibit(mUsedProhibit);
-            mCreateBitMapShareFacebook.setMlScore(mScore);
+            mCreateBitMapShareFacebook.setMlScore((int)mScore);
 
             SharePhoto photo = new SharePhoto.Builder()
                     .setBitmap(mCreateBitMapShareFacebook.getmBitmapScore())
@@ -867,7 +944,8 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
                                     public void onModifierStarted(IModifier<IEntity> iModifier, IEntity iEntity) {
                                         iCurTrend[0] = getTrend(oldLocalMummy, newLocalMummy);
                                         setMoveForMummy(iCurTrend[0], 1);
-
+                                        mScore--;
+                                        txtNumScore.setText(String.valueOf((int) mScore));
                                         //detect when mummy move on tra
                                         for (Object curTrap :
                                                 arrTrap) {
@@ -942,6 +1020,9 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
                                             if (loader2 != null) {
                                                 loader2.stop();
                                             }
+                                            if(ScoredThread != null) {
+                                                ScoredThread.interrupt();
+                                            }
                                             txt_Game_Over_Result.setText("mission completed");
 
                                             ConfirmPanel.object_AnimatedSprite.detachChild(mbtnNext.object_AnimatedSprite);
@@ -975,6 +1056,7 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
                 if(Common.getPurchase_gold() != null){
                     Common.getPurchase_gold().play();
                 }
+                mUsedProhibit++;
 
                 isClickProhibit = false;
                 int iNextRoom;
@@ -997,11 +1079,12 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
         }
         else if(_sender.getName().equals(this.mRec_Bug.getName()) && !isShowConfirmPanel && isClick){
 
-            if(Common.getCount_Bugs() > 0 && isClickBugs && gameStory.iRoom != 1){
+            if(Common.getCount_Bugs() > 0 && isClickBugs && gameStory.iRoom != 1 && isUsedBug){
 
                 if(Common.getBug_hit2() != null){
                     Common.getBug_hit2().play();
                 }
+                mUsedBug++;
 
                 isClickBugs = false;
 
@@ -1041,6 +1124,9 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
         if(loader2 != null){
             loader2.stop();
             loader2.cancel(true);
+        }
+        if(ScoredThread != null) {
+            ScoredThread.interrupt();
         }
 
     }
