@@ -7,9 +7,11 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.android.volley.Request;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -26,6 +28,9 @@ import com.game.tulusoft.themaze.Objective.SpriteObjective;
 import com.game.tulusoft.themaze.R;
 import com.game.tulusoft.themaze.Utilities.Common;
 import com.game.tulusoft.themaze.Utilities.CreteBitmapScoreToShare;
+import com.game.tulusoft.themaze.Utilities.PlayerInfo;
+import com.game.tulusoft.themaze.Utilities.SendAPI;
+import com.game.tulusoft.themaze.Utilities.params_Http;
 
 import org.anddev.andengine.engine.Engine;
 import org.anddev.andengine.engine.camera.Camera;
@@ -99,6 +104,7 @@ public class OptionActivity extends BaseGameActivity implements SpriteObjective.
     Profile profile = Profile.getCurrentProfile();
     //endregion
 
+    SendAPI sender_API;
 
     @Override
     protected void onCreate(Bundle pSavedInstanceState) {
@@ -107,18 +113,40 @@ public class OptionActivity extends BaseGameActivity implements SpriteObjective.
         callbackManager = CallbackManager.Factory.create();
 
         btnLoginFacebook = new LoginButton(this);
+
+        sender_API = new SendAPI(getBaseContext());
+
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(0,0);
         this.addContentView(btnLoginFacebook,params);
-
         btnLoginFacebook.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 Profile profileSuccess = Profile.getCurrentProfile();
                 if(profileSuccess !=null){
                     Toast.makeText(OptionActivity.this, profileSuccess.getName(), Toast.LENGTH_SHORT).show();
-                    mbtnFacebook.getObject_AnimatedSprite().animate(new long[]{100}, new int[]{1}, 1);
-                }
+//                    mbtnFacebook.getObject_AnimatedSprite().animate(new long[]{100}, new int[]{1}, 1);
+//                    if(profile != null){
+//                        String mess = getResources().getString(R.string.facebook_welcom);
+//                        txtWelcom.setText(mess + " " + profile.getFirstName());
+//                        txtWelcom.setPosition(Common.getmWIDTH() / 2 - txtWelcom.getWidth() /2,txtWelcom.getY());
+//                    }
 
+
+                    params_Http[] login_param = new params_Http[]{new params_Http(Common.API_Login_1, profileSuccess.getId()),
+                            new params_Http(Common.API_Login_2, String.valueOf(Common.getMax_Room_N())),
+                            new params_Http(Common.API_Login_3, String.valueOf(Common.getMax_Room_M())),
+                            new params_Http(Common.API_Login_4, String.valueOf(Common.getMax_Room_H())),
+                            new params_Http(Common.API_Login_5, String.valueOf(Common.getMulti_Room_N())),
+                            new params_Http(Common.API_Login_6, String.valueOf(Common.getMulti_Room_M())),
+                            new params_Http(Common.API_Login_7, String.valueOf(Common.getMulti_Room_H())),
+                            new params_Http(Common.API_Login_8, String.valueOf(Common.getCoin_Local())),
+                            new params_Http(Common.API_Login_9, String.valueOf(Common.getCount_Bugs())),
+                            new params_Http(Common.API_Login_10, String.valueOf(Common.getCount_Prohibit())),
+                            new params_Http(Common.API_Login_11, Common.getMap_Trial()),
+                            new params_Http(Common.API_Login_12, String.valueOf(Common.getGame_Speed())),
+                    };
+                    sender_API.HTTPConnectServer(login_param, false, "Login ...", "req_login", Request.Method.POST, Common.URL_Login);
+                }
             }
 
             @Override

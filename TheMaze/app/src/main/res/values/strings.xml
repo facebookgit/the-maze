@@ -2,4 +2,5 @@
     <string name="app_name">The Maze</string>
     <string name="app_id">767261193374211</string>
     <string name="facebook_welcom">logged by </string>
+    <string name="error_str_not_internet">Please check the internet connection !</string>
 </resources>

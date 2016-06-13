@@ -87,6 +87,7 @@ public class Flash extends BaseGameActivity {
         float value_Volume_Sound = Common.getPref_config(getApplicationContext()).getFloat(Common.Key_Config_Volume_Sound, 0.5f);
         float value_Volume_music = Common.getPref_config(getApplicationContext()).getFloat(Common.Key_Config_Volume_Music, 0.5f);
         Boolean value_Sound = Common.getPref_config(getApplicationContext()).getBoolean(Common.Key_Config_Sound, true);
+
         int value_Max_Room_N = Common.getPref_config(getApplicationContext()).getInt(Common.Key_Config_Max_N, 1);
         int value_Mul_Room_N = Common.getPref_config(getApplicationContext()).getInt(Common.Key_Config_Multi_N, 0);
         int value_Max_Room_M = Common.getPref_config(getApplicationContext()).getInt(Common.Key_Config_Max_M, 1);

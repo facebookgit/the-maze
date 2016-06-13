@@ -50,6 +50,28 @@ public class Common {
     public static String Key_Game_Select_Map_Trial = "Key_Game_Select_Map_Trial";
     //game setting
 
+    //API sender
+    public static String API_Login_1 = "facebook_account";
+    public static String API_Login_2 = "max_n";
+    public static String API_Login_3 = "max_m";
+    public static String API_Login_4 = "max_h";
+    public static String API_Login_5 = "mul_n";
+    public static String API_Login_6 = "mul_m";
+    public static String API_Login_7 = "mul_h";
+    public static String API_Login_8 = "coin";
+    public static String API_Login_9 = "bugs";
+    public static String API_Login_10 = "prohibits";
+    public static String API_Login_11 = "map_trial";
+    public static String API_Login_12 = "game_speed";
+    public static String API_TAG = "api_tag";
+    public static String REGISTER_TAG = "register";
+    public static String PLAYER_API = "PLAYER";
+
+    // Server url
+    public static String URL_Server = "http://ec2-54-169-114-177.ap-southeast-1.compute.amazonaws.com/themaze_api/home/";
+    // Server Login url
+    public static String URL_Login = URL_Server + "create";
+
     public static int baseSpeed = 100;
 
     public static float getSpeed_Location() {
