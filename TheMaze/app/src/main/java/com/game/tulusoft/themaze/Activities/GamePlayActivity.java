@@ -14,6 +14,7 @@ import com.game.tulusoft.themaze.Objective.ButtonSprite;
 import com.game.tulusoft.themaze.Objective.SpriteObjective;
 import com.game.tulusoft.themaze.Utilities.Algorithms;
 import com.game.tulusoft.themaze.Utilities.Common;
+import com.game.tulusoft.themaze.Utilities.ConnectionDetector;
 import com.game.tulusoft.themaze.Utilities.CreteBitmapScoreToShare;
 import com.game.tulusoft.themaze.Utilities.GameLoader;
 import com.game.tulusoft.themaze.Utilities.GameStory;
@@ -32,6 +33,7 @@ import org.anddev.andengine.entity.modifier.MoveYModifier;
 import org.anddev.andengine.entity.modifier.SequenceEntityModifier;
 import org.anddev.andengine.entity.scene.Scene;
 import org.anddev.andengine.entity.scene.background.SpriteBackground;
+import org.anddev.andengine.entity.scene.background.modifier.ColorModifier;
 import org.anddev.andengine.entity.sprite.Sprite;
 import org.anddev.andengine.entity.text.ChangeableText;
 import org.anddev.andengine.input.touch.TouchEvent;
@@ -165,6 +167,8 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
 
     CreteBitmapScoreToShare mCreateBitMapShareFacebook;
 
+    ConnectionDetector connectionDetector;
+
     @Override
     public Engine onLoadEngine() {
         this.mCamera = new Camera(0, 0, Common.getmWIDTH(), Common.getmHEIGHT());
@@ -260,7 +264,7 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
 
         //Create Bitmap share Facebook
         mCreateBitMapShareFacebook = new CreteBitmapScoreToShare(mMapSelected,0,0,0,0,getBaseContext());
-
+        connectionDetector = new ConnectionDetector(getBaseContext());
         return engine;
     }
 
@@ -500,9 +504,9 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
 //        txtNumMap.setText(String.valueOf(mMapSelected));
         txtNumMultiRoom.setText(String.valueOf(Common.getMulGameStory()));
 
-        txtNumCoin.setText(String.valueOf(Common.getCoin_Local()));
-        txtNumBugs.setText(String.valueOf(Common.getCount_Bugs()));
-        txtNumProhibit.setText(String.valueOf(Common.getCount_Prohibit()));
+        txtNumCoin.setText(String.valueOf(Common.getPlayerInfo().getCoin()));
+        txtNumBugs.setText(String.valueOf(Common.getPlayerInfo().getBugs()));
+        txtNumProhibit.setText(String.valueOf(Common.getPlayerInfo().getProhibits()));
 
         this.mRec_Bug.setPlaySound(false);
         this.mRec_Prohibit.setPlaySound(false);
@@ -665,13 +669,13 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
             arr_Map_Trial[MapIndex] = String.valueOf(_CurPointHead);
 
             String valueTrial = TextUtils.join(",", arr_Map_Trial);
-            Common.setMap_Trial(valueTrial);
+            Common.getPlayerInfo().setMap_trial(valueTrial);
         }
         if(MapIndex + 1 == Common.getArr_Map_Trial().length){
-            Common.setMap_Trial(Common.getMap_Trial() + ",0,");
+            Common.getPlayerInfo().setMap_trial(Common.getPlayerInfo().getMap_trial() + ",0,");
         }
 
-        Common.getEdit(getBaseContext()).putString(Common.Key_Config_Map_Trial, Common.getMap_Trial()).commit();
+        Common.getEdit(getBaseContext()).putString(Common.Key_Config_Map_Trial, Common.getPlayerInfo().getMap_trial()).commit();
     }
 
     private void setStartRoom(){
@@ -946,7 +950,7 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
                                         setMoveForMummy(iCurTrend[0], 1);
                                         mScore--;
                                         txtNumScore.setText(String.valueOf((int) mScore));
-                                        //detect when mummy move on tra
+                                        //detect when mummy move on tra0
                                         for (Object curTrap :
                                                 arrTrap) {
                                             if (((ButtonSprite) curTrap).Contains(mummy)) {
@@ -958,9 +962,9 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
                                         //detect when mummy move on coin
                                         if(mCoin.Contains(mummy)){
                                             Common.getCoin_bonus().play();
-                                            Common.setCoin_Local(Common.getCoin_Local() + 1);
-                                            txtNumCoin.setText(String.valueOf(Common.getCoin_Local()));
-                                            Common.getEdit(getApplicationContext()).putInt(Common.Key_Config_Coin_Local, Common.getCoin_Local()).commit();
+                                            Common.getPlayerInfo().setCoin(Common.getPlayerInfo().getCoin() + 1);
+                                            txtNumCoin.setText(String.valueOf(Common.getPlayerInfo().getCoin()));
+                                            Common.getEdit(getApplicationContext()).putInt(Common.Key_Config_Coin_Local, Common.getPlayerInfo().getCoin()).commit();
                                             gameStory.Coin.set(CurRoom, false);
                                             mCoin.moveToHide();
                                         }
@@ -968,18 +972,18 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
                                         //detect when mummy move on prohibit
                                         if(mProhibit.Contains(mummy)){
                                             Common.getBonus_bugs_pro().play();
-                                            Common.setCount_Prohibit(Common.getCount_Prohibit() + 1);
-                                            txtNumProhibit.setText(String.valueOf(Common.getCount_Prohibit()));
-                                            Common.getEdit(getApplicationContext()).putInt(Common.Key_Config_Count_Prohibit, Common.getCount_Prohibit()).commit();
+                                            Common.getPlayerInfo().setProhibits(Common.getPlayerInfo().getProhibits() + 1);
+                                            txtNumProhibit.setText(String.valueOf(Common.getPlayerInfo().getProhibits()));
+                                            Common.getEdit(getApplicationContext()).putInt(Common.Key_Config_Count_Prohibit, Common.getPlayerInfo().getProhibits()).commit();
                                             mProhibit.moveToHide();
                                         }
 
                                         //detect when mummy move on bugs
                                         if(mBug.Contains(mummy)){
                                             Common.getBug_hit().play();
-                                            Common.setCount_Bugs(Common.getCount_Bugs() + 1);
-                                            txtNumBugs.setText(String.valueOf(Common.getCount_Bugs()));
-                                            Common.getEdit(getApplicationContext()).putInt(Common.Key_Config_Count_Bugs, Common.getCount_Bugs()).commit();
+                                            Common.getPlayerInfo().setBugs(Common.getPlayerInfo().getBugs() + 1);
+                                            txtNumBugs.setText(String.valueOf(Common.getPlayerInfo().getBugs()));
+                                            Common.getEdit(getApplicationContext()).putInt(Common.Key_Config_Count_Bugs, Common.getPlayerInfo().getBugs()).commit();
                                             mBug.moveToHide();
                                         }
                                     }
@@ -1051,7 +1055,7 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
         }
         else if(_sender.getName().equals(this.mRec_Prohibit.getName()) && !isShowConfirmPanel && isClick){
 
-            if(Common.getCount_Prohibit() > 0 && isClickProhibit && isClickBugs && gameStory.iRoom != 1){
+            if(Common.getPlayerInfo().getProhibits() > 0 && isClickProhibit && isClickBugs && gameStory.iRoom != 1){
 
                 if(Common.getPurchase_gold() != null){
                     Common.getPurchase_gold().play();
@@ -1068,9 +1072,9 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
 
                 this.mLockDoor.object_AnimatedSprite.setPosition(arrTrap[iRandomProhibit].getObject_AnimatedSprite().getX(),arrTrap[iRandomProhibit].getObject_AnimatedSprite().getY());
 
-                Common.setCount_Prohibit(Common.getCount_Prohibit() - 1);
-                txtNumProhibit.setText(String.valueOf(Common.getCount_Prohibit()));
-                Common.getEdit(getApplicationContext()).putInt(Common.Key_Config_Count_Prohibit, Common.getCount_Prohibit()).commit();
+                Common.getPlayerInfo().setProhibits(Common.getPlayerInfo().getProhibits() - 1);
+                txtNumProhibit.setText(String.valueOf(Common.getPlayerInfo().getProhibits()));
+                Common.getEdit(getApplicationContext()).putInt(Common.Key_Config_Count_Prohibit, Common.getPlayerInfo().getProhibits()).commit();
             }else {
                 if(Common.getCancel_click() != null){
                     Common.getCancel_click().play();
@@ -1079,7 +1083,7 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
         }
         else if(_sender.getName().equals(this.mRec_Bug.getName()) && !isShowConfirmPanel && isClick){
 
-            if(Common.getCount_Bugs() > 0 && isClickBugs && gameStory.iRoom != 1 && isUsedBug){
+            if(Common.getPlayerInfo().getBugs() > 0 && isClickBugs && gameStory.iRoom != 1 && isUsedBug){
 
                 if(Common.getBug_hit2() != null){
                     Common.getBug_hit2().play();
@@ -1101,9 +1105,9 @@ public class GamePlayActivity extends BaseGameActivity implements GameLoader.Gam
                     }
                 }
 
-                Common.setCount_Bugs(Common.getCount_Bugs() - 1);
-                txtNumBugs.setText(String.valueOf(Common.getCount_Bugs()));
-                Common.getEdit(getApplicationContext()).putInt(Common.Key_Config_Count_Bugs, Common.getCount_Bugs()).commit();
+                Common.getPlayerInfo().setBugs(Common.getPlayerInfo().getBugs() - 1);
+                txtNumBugs.setText(String.valueOf(Common.getPlayerInfo().getBugs()));
+                Common.getEdit(getApplicationContext()).putInt(Common.Key_Config_Count_Bugs, Common.getPlayerInfo().getBugs()).commit();
             }else {
                 if(Common.getCancel_click() != null){
                     Common.getCancel_click().play();

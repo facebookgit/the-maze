@@ -71,16 +71,18 @@ public class SendAPI implements  Response.Listener<String>,Response.ErrorListene
 
     @Override
     public void onResponse(String response) {
-        JSONObject jObj = null;
-        String tag ="";
+        JSONObject jObj;
+        String playerinfor ="";
         try {
             jObj = new JSONObject(response);
-            tag = jObj.getString("max_n");
+            playerinfor = jObj.getString(Common.PLAYER_API);
+            Common.getPlayerInfo().parseJson(playerinfor);
+            System.out.println("Complete parser");
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        if(tag.equals(Common.REGISTER_TAG)) {
+//        if(playerinfor.equals(Common.REGISTER_TAG)) {
 //            if (!Common.UserLogin.ParseJson(response)) {
 //                Toast.makeText(getApplicationContext(),
 //                        Common.UserLogin.getmErrorMessageParseJson(), Toast.LENGTH_LONG).show();
@@ -89,6 +91,7 @@ public class SendAPI implements  Response.Listener<String>,Response.ErrorListene
 //                startActivity(i);
 //                finish();
 //            }
-        }
+
+//        }
     }
 }

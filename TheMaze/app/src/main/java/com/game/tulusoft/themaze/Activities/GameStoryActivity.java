@@ -323,9 +323,9 @@ public class GameStoryActivity extends BaseGameActivity implements SpriteObjecti
         txtNumMaxRoom.setText(String.valueOf(Common.getMaxGameStory()));
         txtNumMultiRoom.setText(String.valueOf(Common.getMulGameStory()));
 
-        txtNumCoin.setText(String.valueOf(Common.getCoin_Local()));
-        txtNumBugs.setText(String.valueOf(Common.getCount_Bugs()));
-        txtNumProhibit.setText(String.valueOf(Common.getCount_Prohibit()));
+        txtNumCoin.setText(String.valueOf(Common.getPlayerInfo().getCoin()));
+        txtNumBugs.setText(String.valueOf(Common.getPlayerInfo().getBugs()));
+        txtNumProhibit.setText(String.valueOf(Common.getPlayerInfo().getProhibits()));
         this.ConfirmPanel.CenterScreen_Horizontal();
 
         this.mRec_Bug.setPlaySound(false);
@@ -410,9 +410,9 @@ public class GameStoryActivity extends BaseGameActivity implements SpriteObjecti
                                         //detect when mummy move on coin
                                         if(mCoin.Contains(mummy)){
                                             Common.getCoin_bonus().play();
-                                            Common.setCoin_Local(Common.getCoin_Local() + 1);
-                                            txtNumCoin.setText(String.valueOf(Common.getCoin_Local()));
-                                            Common.getEdit(getApplicationContext()).putInt(Common.Key_Config_Coin_Local, Common.getCoin_Local()).commit();
+                                            Common.getPlayerInfo().setCoin(Common.getPlayerInfo().getCoin() + 1);
+                                            txtNumCoin.setText(String.valueOf(Common.getPlayerInfo().getCoin()));
+                                            Common.getEdit(getApplicationContext()).putInt(Common.Key_Config_Coin_Local, Common.getPlayerInfo().getCoin()).commit();
                                             gameStory.Coin.set(CurRoom, false);
                                             mCoin.moveToHide();
                                         }
@@ -420,18 +420,18 @@ public class GameStoryActivity extends BaseGameActivity implements SpriteObjecti
                                         //detect when mummy move on prohibit
                                         if(mProhibit.Contains(mummy)){
                                             Common.getBonus_bugs_pro().play();
-                                            Common.setCount_Prohibit(Common.getCount_Prohibit() + 1);
-                                            txtNumProhibit.setText(String.valueOf(Common.getCount_Prohibit()));
-                                            Common.getEdit(getApplicationContext()).putInt(Common.Key_Config_Count_Prohibit, Common.getCount_Prohibit()).commit();
+                                            Common.getPlayerInfo().setProhibits(Common.getPlayerInfo().getProhibits() + 1);
+                                            txtNumProhibit.setText(String.valueOf(Common.getPlayerInfo().getProhibits()));
+                                            Common.getEdit(getApplicationContext()).putInt(Common.Key_Config_Count_Prohibit, Common.getPlayerInfo().getProhibits()).commit();
                                             mProhibit.moveToHide();
                                         }
 
                                         //detect when mummy move on bugs
                                         if(mBug.Contains(mummy)){
                                             Common.getBug_hit().play();
-                                            Common.setCount_Bugs(Common.getCount_Bugs() + 1);
-                                            txtNumBugs.setText(String.valueOf(Common.getCount_Bugs()));
-                                            Common.getEdit(getApplicationContext()).putInt(Common.Key_Config_Count_Bugs, Common.getCount_Bugs()).commit();
+                                            Common.getPlayerInfo().setBugs(Common.getPlayerInfo().getBugs() + 1);
+                                            txtNumBugs.setText(String.valueOf(Common.getPlayerInfo().getBugs()));
+                                            Common.getEdit(getApplicationContext()).putInt(Common.Key_Config_Count_Bugs, Common.getPlayerInfo().getBugs()).commit();
                                             mBug.moveToHide();
                                         }
                                     }
@@ -480,7 +480,7 @@ public class GameStoryActivity extends BaseGameActivity implements SpriteObjecti
         }
         else if(_sender.getName().equals(this.mRec_Prohibit.getName()) && !isShowConfirmPanel && isClick){
 
-            if(Common.getCount_Prohibit() > 0 && isClickProhibit && isClickBugs && gameStory.iRoom != 1){
+            if(Common.getPlayerInfo().getProhibits() > 0 && isClickProhibit && isClickBugs && gameStory.iRoom != 1){
 
                 if(Common.getPurchase_gold() != null){
                     Common.getPurchase_gold().play();
@@ -496,9 +496,9 @@ public class GameStoryActivity extends BaseGameActivity implements SpriteObjecti
 
                 this.mLockDoor.object_AnimatedSprite.setPosition(arrTrap[iRandomProhibit].getObject_AnimatedSprite().getX(),arrTrap[iRandomProhibit].getObject_AnimatedSprite().getY());
 
-                Common.setCount_Prohibit(Common.getCount_Prohibit() - 1);
-                txtNumProhibit.setText(String.valueOf(Common.getCount_Prohibit()));
-                Common.getEdit(getApplicationContext()).putInt(Common.Key_Config_Count_Prohibit, Common.getCount_Prohibit()).commit();
+                Common.getPlayerInfo().setProhibits(Common.getPlayerInfo().getProhibits() - 1);
+                txtNumProhibit.setText(String.valueOf(Common.getPlayerInfo().getProhibits()));
+                Common.getEdit(getApplicationContext()).putInt(Common.Key_Config_Count_Prohibit, Common.getPlayerInfo().getProhibits()).commit();
             }else {
                 if(Common.getCancel_click() != null){
                     Common.getCancel_click().play();
@@ -507,7 +507,7 @@ public class GameStoryActivity extends BaseGameActivity implements SpriteObjecti
         }
         else if(_sender.getName().equals(this.mRec_Bug.getName()) && !isShowConfirmPanel && isClick){
 
-            if(Common.getCount_Bugs() > 0 && isClickBugs && gameStory.iRoom != 1){
+            if(Common.getPlayerInfo().getBugs() > 0 && isClickBugs && gameStory.iRoom != 1){
 
                 if(Common.getBug_hit2() != null){
                     Common.getBug_hit2().play();
@@ -528,9 +528,9 @@ public class GameStoryActivity extends BaseGameActivity implements SpriteObjecti
                     }
                 }
 
-                Common.setCount_Bugs(Common.getCount_Bugs() - 1);
-                txtNumBugs.setText(String.valueOf(Common.getCount_Bugs()));
-                Common.getEdit(getApplicationContext()).putInt(Common.Key_Config_Count_Bugs, Common.getCount_Bugs()).commit();
+                Common.getPlayerInfo().setBugs(Common.getPlayerInfo().getBugs() - 1);
+                txtNumBugs.setText(String.valueOf(Common.getPlayerInfo().getBugs()));
+                Common.getEdit(getApplicationContext()).putInt(Common.Key_Config_Count_Bugs, Common.getPlayerInfo().getBugs()).commit();
             }else {
                 if(Common.getCancel_click() != null){
                     Common.getCancel_click().play();

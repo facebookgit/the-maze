@@ -7,6 +7,7 @@ import android.widget.Toast;
 import com.facebook.Profile;
 import com.game.tulusoft.themaze.Objective.ButtonSprite;
 import com.game.tulusoft.themaze.Utilities.Common;
+import com.game.tulusoft.themaze.Utilities.PlayerInfo;
 
 import org.anddev.andengine.engine.Engine;
 import org.anddev.andengine.engine.camera.Camera;
@@ -88,33 +89,40 @@ public class Flash extends BaseGameActivity {
         float value_Volume_music = Common.getPref_config(getApplicationContext()).getFloat(Common.Key_Config_Volume_Music, 0.5f);
         Boolean value_Sound = Common.getPref_config(getApplicationContext()).getBoolean(Common.Key_Config_Sound, true);
 
-        int value_Max_Room_N = Common.getPref_config(getApplicationContext()).getInt(Common.Key_Config_Max_N, 1);
-        int value_Mul_Room_N = Common.getPref_config(getApplicationContext()).getInt(Common.Key_Config_Multi_N, 0);
-        int value_Max_Room_M = Common.getPref_config(getApplicationContext()).getInt(Common.Key_Config_Max_M, 1);
-        int value_Mul_Room_M = Common.getPref_config(getApplicationContext()).getInt(Common.Key_Config_Multi_M, 0);
-        int value_Max_Room_H = Common.getPref_config(getApplicationContext()).getInt(Common.Key_Config_Max_H, 1);
-        int value_Mul_Room_H = Common.getPref_config(getApplicationContext()).getInt(Common.Key_Config_Multi_H, 0);
+
         int value_Level = Common.getPref_config(getApplicationContext()).getInt(Common.Key_Config_Level, 0);
 
-        int value_Count_Prohibit = Common.getPref_config(getApplicationContext()).getInt(Common.Key_Config_Count_Prohibit, 0);
-        int value_Count_Bugs = Common.getPref_config(getApplicationContext()).getInt(Common.Key_Config_Count_Bugs, 0);
-        int value_Coin_Local = Common.getPref_config(getApplicationContext()).getInt(Common.Key_Config_Coin_Local, 0);
-        int value_Game_Speed = Common.getPref_config(getApplicationContext()).getInt(Common.Key_Game_Speed, 1);
 
-        String value_Map_Trial = Common.getPref_config(getApplicationContext()).getString(Common.Key_Config_Map_Trial, "0,");
+        String value_PlayerInfor = Common.getPref_config(getApplicationContext()).getString(Common.Key_PlayerInfor, (new PlayerInfo()).toJson());
 
-        Common.setMax_Room_N(value_Max_Room_N);
-        Common.setMulti_Room_N(value_Mul_Room_N);
-        Common.setMax_Room_M(value_Max_Room_M);
-        Common.setMulti_Room_M(value_Mul_Room_M);
-        Common.setMax_Room_H(value_Max_Room_H);
-        Common.setMulti_Room_H(value_Mul_Room_H);
+        //region delete detail infor
+//        int value_Count_Prohibit = Common.getPref_config(getApplicationContext()).getInt(Common.Key_Config_Count_Prohibit, 0);
+//        int value_Count_Bugs = Common.getPref_config(getApplicationContext()).getInt(Common.Key_Config_Count_Bugs, 0);
+//        int value_Coin_Local = Common.getPref_config(getApplicationContext()).getInt(Common.Key_Config_Coin_Local, 0);
+//        int value_Game_Speed = Common.getPref_config(getApplicationContext()).getInt(Common.Key_Game_Speed, 1);
+//
+//        String value_Map_Trial = Common.getPref_config(getApplicationContext()).getString(Common.Key_Config_Map_Trial, "0,");
 
-        Common.setCount_Prohibit(value_Count_Prohibit);
-        Common.setCount_Bugs(value_Count_Bugs);
-        Common.setCoin_Local(value_Coin_Local);
+//        int value_Max_Room_N = Common.getPref_config(getApplicationContext()).getInt(Common.Key_Config_Max_N, 1);
+//        int value_Mul_Room_N = Common.getPref_config(getApplicationContext()).getInt(Common.Key_Config_Multi_N, 0);
+//        int value_Max_Room_M = Common.getPref_config(getApplicationContext()).getInt(Common.Key_Config_Max_M, 1);
+//        int value_Mul_Room_M = Common.getPref_config(getApplicationContext()).getInt(Common.Key_Config_Multi_M, 0);
+//        int value_Max_Room_H = Common.getPref_config(getApplicationContext()).getInt(Common.Key_Config_Max_H, 1);
+//        int value_Mul_Room_H = Common.getPref_config(getApplicationContext()).getInt(Common.Key_Config_Multi_H, 0);
+//        Common.setMax_Room_N(value_Max_Room_N);
+//        Common.setMulti_Room_N(value_Mul_Room_N);
+//        Common.setMax_Room_M(value_Max_Room_M);
+//        Common.setMulti_Room_M(value_Mul_Room_M);
+//        Common.setMax_Room_H(value_Max_Room_H);
+//        Common.setMulti_Room_H(value_Mul_Room_H);
+//        Common.setMap_Trial(value_Map_Trial);
 
-        Common.setMap_Trial(value_Map_Trial);
+//        Common.setCount_Prohibit(value_Count_Prohibit);
+//        Common.setCount_Bugs(value_Count_Bugs);
+//        Common.setCoin_Local(value_Coin_Local);
+//        Common.setGame_Speed(value_Game_Speed);
+
+        //endregion
 
         Common.setiLevel(value_Level);
 
@@ -123,7 +131,8 @@ public class Flash extends BaseGameActivity {
         Common.setVolume_Sound(value_Volume_Sound);
         Common.setVolume_Music(value_Volume_music);
 
-        Common.setGame_Speed(value_Game_Speed);
+
+        Common.setPlayerInfo(value_PlayerInfor);
 
         this.mLoGo.CenterScreen();
         this.mLoading.CenterScreen();

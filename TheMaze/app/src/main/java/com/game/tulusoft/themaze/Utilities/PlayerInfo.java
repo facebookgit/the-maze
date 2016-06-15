@@ -119,7 +119,7 @@ public class PlayerInfo {
     private int game_speed;
 
     public PlayerInfo(){
-        facebook_account = null;
+        facebook_account = "";
         max_n = 1;
         max_m = 1;
         max_h = 1;

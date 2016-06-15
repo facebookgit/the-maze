@@ -3,6 +3,9 @@ package com.game.tulusoft.themaze.Utilities;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.android.volley.Request;
+import com.facebook.AccessToken;
+import com.facebook.Profile;
 import com.game.tulusoft.themaze.Objective.ButtonSprite;
 
 import org.anddev.andengine.audio.music.Music;
@@ -19,8 +22,6 @@ import java.util.Random;
  * Created by Shazam on 3/1/2016.
  */
 public class Common {
-
-
 
     // key get config
     public static String Key_Config_Volume_Sound = "Key_Config_Volume_Sound";
@@ -50,6 +51,9 @@ public class Common {
     public static String Key_Game_Select_Map_Trial = "Key_Game_Select_Map_Trial";
     //game setting
 
+    // key Playerinfor
+    public static String Key_PlayerInfor= "Key_PlayerInfor";
+
     //API sender
     public static String API_Login_1 = "facebook_account";
     public static String API_Login_2 = "max_n";
@@ -75,25 +79,16 @@ public class Common {
     public static int baseSpeed = 100;
 
     public static float getSpeed_Location() {
-        return Speed_Location[game_Speed];
+        return Speed_Location[Common.getPlayerInfo().getGame_speed()];
     }
 
     public static float[] Speed_Location = new float[]{0,0.4F,0.35F,0.3F,0.25F,0.2F};
 
     public static int getSpeed_Animation_mummy() {
-        return Speed_Animation_mummy[game_Speed];
+        return Speed_Animation_mummy[Common.getPlayerInfo().getGame_speed()];
     }
 
     public static int[] Speed_Animation_mummy = new int[]{0,100,87,75,62,50};
-
-    public static int getGame_Speed() {
-        return game_Speed;
-    }
-
-    public static void setGame_Speed(int game_Speed) {
-        Common.game_Speed = game_Speed;
-    }
-    private static int game_Speed = 1;
 
     public static int getObject_width() {
         return object_width;
@@ -197,11 +192,11 @@ public class Common {
     public static int getMaxGameStory(){
         switch (getiLevel()){
             case LevelNormal:
-                return Common.getMax_Room_N();
+                return Common.getPlayerInfo().getMax_n();
             case LevelMedium:
-                return Common.getMax_Room_M();
+                return Common.getPlayerInfo().getMax_m();
             case LevelHard:
-                return Common.getMax_Room_H();
+                return Common.getPlayerInfo().getMax_h();
         }
 
         return 1;
@@ -210,13 +205,13 @@ public class Common {
     public static void setMaxGameStory(int _iRoom){
         switch (getiLevel()){
             case LevelNormal:
-                Common.setMax_Room_N(_iRoom);
+                Common.getPlayerInfo().setMax_n(_iRoom);
                 break;
             case LevelMedium:
-                Common.setMax_Room_M(_iRoom);
+                Common.getPlayerInfo().setMax_m(_iRoom);
                 break;
             case LevelHard:
-                Common.setMax_Room_H(_iRoom);
+                Common.getPlayerInfo().setMax_h(_iRoom);
                 break;
         }
     }
@@ -224,11 +219,11 @@ public class Common {
     public static int getMulGameStory(){
         switch (getiLevel()){
             case LevelNormal:
-                return Common.getMulti_Room_N();
+                return Common.getPlayerInfo().getMul_n();
             case LevelMedium:
-                return Common.getMulti_Room_M();
+                return Common.getPlayerInfo().getMul_m();
             case LevelHard:
-                return Common.getMulti_Room_H();
+                return Common.getPlayerInfo().getMul_h();
         }
 
         return 1;
@@ -237,13 +232,13 @@ public class Common {
     public static void setMulGameStory(int _iRoom){
         switch (getiLevel()){
             case LevelNormal:
-                Common.setMulti_Room_N(_iRoom);
+                Common.getPlayerInfo().setMul_n(_iRoom);
                 break;
             case LevelMedium:
-                Common.setMulti_Room_M(_iRoom);
+                Common.getPlayerInfo().setMul_m(_iRoom);
                 break;
             case LevelHard:
-                Common.setMulti_Room_H(_iRoom);
+                Common.getPlayerInfo().setMul_h(_iRoom);
                 break;
         }
     }
@@ -525,36 +520,6 @@ public class Common {
     private static String player_name;
 
 
-    //region Coin
-    public static int Count_Prohibit;
-    public static int Count_Bugs;
-    public static int Coin_Local;
-
-    public static int getCount_Prohibit() {
-        return Count_Prohibit;
-    }
-
-    public static void setCount_Prohibit(int count_Prohibit) {
-        Count_Prohibit = count_Prohibit;
-    }
-
-    public static int getCount_Bugs() {
-        return Count_Bugs;
-    }
-
-    public static void setCount_Bugs(int count_Bugs) {
-        Count_Bugs = count_Bugs;
-    }
-
-    public static int getCoin_Local() {
-        return Coin_Local;
-    }
-
-    public static void setCoin_Local(int coin_Local) {
-        Coin_Local = coin_Local;
-    }
-    //endregion
-
     // SharedPreferences
 
     public static String mazeData = "mazeData";
@@ -580,80 +545,146 @@ public class Common {
 
     // game story infor
 
-    public static int getMax_Room_N() {
-        return Max_Room_N;
+    //region delete detail infor
+//
+//    public static int getMax_Room_N() {
+//        return Max_Room_N;
+//    }
+//
+//    public static void setMax_Room_N(int max_Room_N) {
+//        Max_Room_N = max_Room_N;
+//    }
+//
+//    private static int Max_Room_N;
+//
+//    public static int getMulti_Room_N() {
+//        return Multi_Room_N;
+//    }
+//
+//    public static void setMulti_Room_N(int multi_Room_N) {
+//        Multi_Room_N = multi_Room_N;
+//    }
+//
+//    private static int Multi_Room_N;
+//
+//    public static int getMax_Room_M() {
+//        return Max_Room_M;
+//    }
+//
+//    public static void setMax_Room_M(int max_Room_M) {
+//        Max_Room_M = max_Room_M;
+//    }
+//
+//    private static int Max_Room_M;
+//
+//    public static int getMulti_Room_M() {
+//        return Multi_Room_M;
+//    }
+//
+//    public static void setMulti_Room_M(int multi_Room_M) {
+//        Multi_Room_M = multi_Room_M;
+//    }
+//
+//    private static int Multi_Room_M;
+//
+//
+//    public static int getMax_Room_H() {
+//        return Max_Room_H;
+//    }
+//
+//    public static void setMax_Room_H(int max_Room_H) {
+//        Max_Room_H = max_Room_H;
+//    }
+//
+//    private static int Max_Room_H;
+//
+//    public static int getMulti_Room_H() {
+//        return Multi_Room_H;
+//    }
+//
+//    public static void setMulti_Room_H(int multi_Room_H) {
+//        Multi_Room_H = multi_Room_H;
+//    }
+//
+//    private static int Multi_Room_H;
+//
+//    public static String getMap_Trial() {
+//        return Map_Trial;
+//    }
+//
+//    public static void setMap_Trial(String map_Trial) {
+//        Map_Trial = map_Trial;
+//    }
+//
+//    private static String Map_Trial;
+
+    //region Coin
+//    public static int Count_Prohibit;
+//    public static int Count_Bugs;
+//    public static int Coin_Local;
+//
+//    public static int getCount_Prohibit() {
+//        return Count_Prohibit;
+//    }
+//
+//    public static void setCount_Prohibit(int count_Prohibit) {
+//        Count_Prohibit = count_Prohibit;
+//    }
+//
+//    public static int getCount_Bugs() {
+//        return Count_Bugs;
+//    }
+//
+//    public static void setCount_Bugs(int count_Bugs) {
+//        Count_Bugs = count_Bugs;
+//    }
+//
+//    public static int getCoin_Local() {
+//        return Coin_Local;
+//    }
+//
+//    public static void setCoin_Local(int coin_Local) {
+//        Coin_Local = coin_Local;
+//    }
+
+
+//    public static int getGame_Speed() {
+//        return game_Speed;
+//    }
+//
+//    public static void setGame_Speed(int game_Speed) {
+//        Common.game_Speed = game_Speed;
+//    }
+//    private static int game_Speed = 1;
+    //endregion
+
+    //endregion
+
+    // Player info localy
+
+    public static PlayerInfo getPlayerInfo() {
+        if(playerInfo == null) playerInfo = new PlayerInfo();
+        return playerInfo;
     }
 
-    public static void setMax_Room_N(int max_Room_N) {
-        Max_Room_N = max_Room_N;
+    public static void setPlayerInfo(String _json) {
+        PlayerInfo pl = new PlayerInfo();
+        pl.parseJson(_json);
+        playerInfo = pl;
     }
 
-    private static int Max_Room_N;
-
-    public static int getMulti_Room_N() {
-        return Multi_Room_N;
-    }
-
-    public static void setMulti_Room_N(int multi_Room_N) {
-        Multi_Room_N = multi_Room_N;
-    }
-
-    private static int Multi_Room_N;
-
-    public static int getMax_Room_M() {
-        return Max_Room_M;
-    }
-
-    public static void setMax_Room_M(int max_Room_M) {
-        Max_Room_M = max_Room_M;
-    }
-
-    private static int Max_Room_M;
-
-    public static int getMulti_Room_M() {
-        return Multi_Room_M;
-    }
-
-    public static void setMulti_Room_M(int multi_Room_M) {
-        Multi_Room_M = multi_Room_M;
-    }
-
-    private static int Multi_Room_M;
-
-
-    public static int getMax_Room_H() {
-        return Max_Room_H;
-    }
-
-    public static void setMax_Room_H(int max_Room_H) {
-        Max_Room_H = max_Room_H;
-    }
-
-    private static int Max_Room_H;
-
-    public static int getMulti_Room_H() {
-        return Multi_Room_H;
-    }
-
-    public static void setMulti_Room_H(int multi_Room_H) {
-        Multi_Room_H = multi_Room_H;
-    }
-
-    private static int Multi_Room_H;
-
-    public static String getMap_Trial() {
-        return Map_Trial;
-    }
+    private static PlayerInfo playerInfo;
 
     public static String[] getArr_Map_Trial(){
-        return Common.getMap_Trial().split(",");
+        return Common.getPlayerInfo().getMap_trial().split(",");
     }
 
-    public static void setMap_Trial(String map_Trial) {
-        Map_Trial = map_Trial;
-    }
 
-    private static String Map_Trial;
+
+    public static boolean isLoggedIn() {
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        return accessToken != null;
+    }
 
 
     public static void CommitSharedPreferent(Context _context){
@@ -662,21 +693,49 @@ public class Common {
         Common.getEdit(_context).putBoolean(Common.Key_Config_Sound, Common.getIsSound()).commit();
         Common.getEdit(_context).putInt(Common.Key_Config_Level, Common.getiLevel()).commit();
 
-        Common.getEdit(_context).putInt(Common.Key_Config_Max_N, Common.getMax_Room_N()).commit();
-        Common.getEdit(_context).putInt(Common.Key_Config_Multi_N, Common.getMulti_Room_N()).commit();
+        //region delete detail infor
+//        Common.getEdit(_context).putInt(Common.Key_Config_Max_N, Common.getMax_Room_N()).commit();
+//        Common.getEdit(_context).putInt(Common.Key_Config_Multi_N, Common.getMulti_Room_N()).commit();
+//
+//        Common.getEdit(_context).putInt(Common.Key_Config_Max_M, Common.getMax_Room_M()).commit();
+//        Common.getEdit(_context).putInt(Common.Key_Config_Multi_M, Common.getMulti_Room_M()).commit();
+//
+//        Common.getEdit(_context).putInt(Common.Key_Config_Max_H, Common.getMax_Room_H()).commit();
+//        Common.getEdit(_context).putInt(Common.Key_Config_Multi_H, Common.getMulti_Room_H()).commit();
+//        Common.getEdit(_context).putString(Common.Key_Config_Map_Trial, Common.getMap_Trial()).commit();
 
-        Common.getEdit(_context).putInt(Common.Key_Config_Max_M, Common.getMax_Room_M()).commit();
-        Common.getEdit(_context).putInt(Common.Key_Config_Multi_M, Common.getMulti_Room_M()).commit();
+//        Common.getEdit(_context).putInt(Common.Key_Config_Coin_Local, Common.getCoin_Local()).commit();
+//        Common.getEdit(_context).putInt(Common.Key_Config_Count_Bugs, Common.getCount_Bugs()).commit();
+//        Common.getEdit(_context).putInt(Common.Key_Config_Count_Prohibit, Common.getCount_Prohibit()).commit();
+//
+//        Common.getEdit(_context).putInt(Common.Key_Game_Speed, Common.getGame_Speed()).commit();
+        //endregion
 
-        Common.getEdit(_context).putInt(Common.Key_Config_Max_H, Common.getMax_Room_H()).commit();
-        Common.getEdit(_context).putInt(Common.Key_Config_Multi_H, Common.getMulti_Room_H()).commit();
+        Common.getEdit(_context).putString(Common.Key_PlayerInfor, Common.getPlayerInfo().toJson()).commit();
 
-        Common.getEdit(_context).putInt(Common.Key_Config_Coin_Local, Common.getCoin_Local()).commit();
-        Common.getEdit(_context).putInt(Common.Key_Config_Count_Bugs, Common.getCount_Bugs()).commit();
-        Common.getEdit(_context).putInt(Common.Key_Config_Count_Prohibit, Common.getCount_Prohibit()).commit();
+        //push to server
+        if(Common.isLoggedIn()){ // is loged in
+            SendAPI sender_API = new SendAPI(_context);
 
-        Common.getEdit(_context).putString(Common.Key_Config_Map_Trial, Common.getMap_Trial()).commit();
-        Common.getEdit(_context).putInt(Common.Key_Game_Speed, Common.getGame_Speed()).commit();
+            Profile profileSuccess = Profile.getCurrentProfile();
+            if(profileSuccess !=null) {
+                params_Http[] login_param = new params_Http[]{new params_Http(Common.API_Login_1, profileSuccess.getId()),
+                        new params_Http(Common.API_Login_2, String.valueOf(Common.getPlayerInfo().getMax_n())),
+                        new params_Http(Common.API_Login_3, String.valueOf(Common.getPlayerInfo().getMax_m())),
+                        new params_Http(Common.API_Login_4, String.valueOf(Common.getPlayerInfo().getMax_h())),
+                        new params_Http(Common.API_Login_5, String.valueOf(Common.getPlayerInfo().getMul_n())),
+                        new params_Http(Common.API_Login_6, String.valueOf(Common.getPlayerInfo().getMul_m())),
+                        new params_Http(Common.API_Login_7, String.valueOf(Common.getPlayerInfo().getMul_h())),
+                        new params_Http(Common.API_Login_8, String.valueOf(Common.getPlayerInfo().getCoin())),
+                        new params_Http(Common.API_Login_9, String.valueOf(Common.getPlayerInfo().getBugs())),
+                        new params_Http(Common.API_Login_10, String.valueOf(Common.getPlayerInfo().getProhibits())),
+                        new params_Http(Common.API_Login_11, Common.getPlayerInfo().getMap_trial()),
+                        new params_Http(Common.API_Login_12, String.valueOf(Common.getPlayerInfo().getGame_speed())),
+                };
+                sender_API.HTTPConnectServer(login_param, false, "Login ...", "req_login", Request.Method.POST, Common.URL_Login);
+            }
+        }
+
     }
 
 }

@@ -133,17 +133,17 @@ public class OptionActivity extends BaseGameActivity implements SpriteObjective.
 
 
                     params_Http[] login_param = new params_Http[]{new params_Http(Common.API_Login_1, profileSuccess.getId()),
-                            new params_Http(Common.API_Login_2, String.valueOf(Common.getMax_Room_N())),
-                            new params_Http(Common.API_Login_3, String.valueOf(Common.getMax_Room_M())),
-                            new params_Http(Common.API_Login_4, String.valueOf(Common.getMax_Room_H())),
-                            new params_Http(Common.API_Login_5, String.valueOf(Common.getMulti_Room_N())),
-                            new params_Http(Common.API_Login_6, String.valueOf(Common.getMulti_Room_M())),
-                            new params_Http(Common.API_Login_7, String.valueOf(Common.getMulti_Room_H())),
-                            new params_Http(Common.API_Login_8, String.valueOf(Common.getCoin_Local())),
-                            new params_Http(Common.API_Login_9, String.valueOf(Common.getCount_Bugs())),
-                            new params_Http(Common.API_Login_10, String.valueOf(Common.getCount_Prohibit())),
-                            new params_Http(Common.API_Login_11, Common.getMap_Trial()),
-                            new params_Http(Common.API_Login_12, String.valueOf(Common.getGame_Speed())),
+                            new params_Http(Common.API_Login_2, String.valueOf(Common.getPlayerInfo().getMax_n())),
+                            new params_Http(Common.API_Login_3, String.valueOf(Common.getPlayerInfo().getMax_m())),
+                            new params_Http(Common.API_Login_4, String.valueOf(Common.getPlayerInfo().getMax_h())),
+                            new params_Http(Common.API_Login_5, String.valueOf(Common.getPlayerInfo().getMul_n())),
+                            new params_Http(Common.API_Login_6, String.valueOf(Common.getPlayerInfo().getMul_m())),
+                            new params_Http(Common.API_Login_7, String.valueOf(Common.getPlayerInfo().getMul_h())),
+                            new params_Http(Common.API_Login_8, String.valueOf(Common.getPlayerInfo().getCoin())),
+                            new params_Http(Common.API_Login_9, String.valueOf(Common.getPlayerInfo().getBugs())),
+                            new params_Http(Common.API_Login_10, String.valueOf(Common.getPlayerInfo().getProhibits())),
+                            new params_Http(Common.API_Login_11, Common.getPlayerInfo().getMap_trial()),
+                            new params_Http(Common.API_Login_12, String.valueOf(Common.getPlayerInfo().getGame_speed())),
                     };
                     sender_API.HTTPConnectServer(login_param, false, "Login ...", "req_login", Request.Method.POST, Common.URL_Login);
                 }
@@ -161,11 +161,6 @@ public class OptionActivity extends BaseGameActivity implements SpriteObjective.
             }
         });
 
-    }
-
-    public boolean isLoggedIn() {
-        AccessToken accessToken = AccessToken.getCurrentAccessToken();
-        return accessToken != null;
     }
     @Override
     public Engine onLoadEngine() {
@@ -271,7 +266,7 @@ public class OptionActivity extends BaseGameActivity implements SpriteObjective.
         this.mbtnKnot_Sound.getObject_AnimatedSprite().setPosition(deltaSound_Location, this.mbtnKnot_Sound.getObject_AnimatedSprite().getY());
         this.mbtnKnot_Music.getObject_AnimatedSprite().setPosition(deltaMusic_Location, this.mbtnKnot_Music.getObject_AnimatedSprite().getY());
 
-        if(isLoggedIn()){
+        if(Common.isLoggedIn()){
             mbtnFacebook.getObject_AnimatedSprite().animate(new long[]{100}, new int[]{1}, 1);
             if(profile != null){
                 String mess = getResources().getString(R.string.facebook_welcom);
@@ -303,7 +298,7 @@ public class OptionActivity extends BaseGameActivity implements SpriteObjective.
             Common.theme_Music.setVolume(Common.getVolume_Music());
         }else if(_sender.getName().equals(this.mbtnFacebook.getName())){
             btnLoginFacebook.performClick();
-            if(isLoggedIn()){
+            if(Common.isLoggedIn()){
                 if(profile != null){
                     String mess = getResources().getString(R.string.facebook_welcom);
                     txtWelcom.setText(mess + " " + profile.getFirstName());
@@ -337,7 +332,7 @@ public class OptionActivity extends BaseGameActivity implements SpriteObjective.
     @Override
     public void FinishAnimation(SpriteObjective _sender) {
         if(_sender.getName().equals(this.mbtnFacebook.getName())){
-            if(isLoggedIn()){
+            if(Common.isLoggedIn()){
                 mbtnFacebook.getObject_AnimatedSprite().animate(new long[]{100}, new int[]{1}, 1);
                 if(profile != null){
                     String mess = getResources().getString(R.string.facebook_welcom);
